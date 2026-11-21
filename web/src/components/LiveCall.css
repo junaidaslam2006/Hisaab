@@ -1,0 +1,924 @@
+/* Voice input: the live call screen (.lc-*) and the "Speak an entry" recorder with its result sheet (.mic-*). */
+
+/* ================= Live call: a night sky, ivory type, one calm line for the voice ================= */
+.lc {
+  --lc-ivory: var(--ink-inverse);
+  --lc-ivory-2: color-mix(in srgb, var(--ink-inverse) 80%, transparent);
+  --lc-hair: color-mix(in srgb, var(--ink-inverse) 24%, transparent);
+  --lc-frame: color-mix(in srgb, var(--ink-inverse) 42%, transparent);
+  --lc-chrome: color-mix(in srgb, var(--sky-night) 82%, var(--ink));
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'top'
+    'body';
+  color: var(--lc-ivory);
+  background: var(--lc-chrome);
+  animation: lc-fade 240ms var(--ease);
+}
+.lc:focus {
+  outline: none;
+}
+.lc :focus-visible {
+  outline: 2px solid var(--lc-ivory);
+  outline-offset: 3px;
+}
+.lc .lc-pill:focus-visible {
+  border-radius: var(--r-pill);
+}
+
+.lc-sky {
+  grid-area: body;
+  position: relative;
+  overflow: hidden;
+}
+/* Keeps the type legible wherever a moonlit cloud drifts behind it. */
+.lc-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 62% 56% at 50% 50%, color-mix(in srgb, var(--sky-night) 62%, transparent), transparent),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sky-night) 55%, transparent),
+      transparent 22%,
+      transparent 70%,
+      color-mix(in srgb, var(--sky-night) 60%, transparent)
+    );
+}
+
+/* Small uppercase labels, like the cells of a launch-post card */
+.lc-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lc-ivory-2);
+}
+html[lang='ur'] .lc-label {
+  font-family: var(--font-urdu);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  line-height: 1.9;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ---------- top bar: what this call is, and the way out ---------- */
+.lc-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'title action'
+    'context action';
+  align-items: center;
+  column-gap: var(--s4);
+  row-gap: 2px;
+  padding: max(var(--s4), env(safe-area-inset-top)) var(--s6) var(--s4);
+  border-bottom: 1px solid var(--lc-hair);
+  background: var(--lc-chrome);
+}
+.lc-title {
+  grid-area: title;
+}
+.lc-context {
+  grid-area: context;
+  font-size: var(--t-sm);
+  color: var(--lc-ivory-2);
+  overflow-wrap: anywhere;
+}
+.lc-top-action {
+  grid-area: action;
+}
+
+/* ---------- pills ---------- */
+.lc-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  min-height: 44px;
+  padding: 0 var(--s5);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  font-family: var(--font-sans);
+  font-size: var(--t-md);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+html[lang='ur'] .lc-pill {
+  font-family: var(--font-urdu);
+  font-weight: 500;
+  line-height: 2;
+}
+.lc-pill-ivory {
+  background: var(--lc-ivory);
+  color: var(--ink);
+}
+.lc-pill-ivory:hover {
+  background: color-mix(in srgb, var(--ink-inverse) 84%, var(--sky-night));
+}
+.lc-pill-ghost {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--ink-inverse) 60%, transparent);
+  color: var(--lc-ivory);
+}
+.lc-pill-ghost:hover {
+  background: color-mix(in srgb, var(--ink-inverse) 12%, transparent);
+}
+.lc-hangup .icon {
+  transform: rotate(135deg);
+}
+.lc-pill:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.lc-pill-ivory:disabled:hover {
+  background: var(--lc-ivory);
+}
+.lc-pill-ghost:disabled:hover {
+  background: transparent;
+}
+
+/* "Done speaking": commits the turn at once instead of waiting for the pause to be noticed. */
+.lc-done {
+  min-width: 180px;
+}
+
+/* ---------- stage ---------- */
+.lc-body {
+  grid-area: body;
+  position: relative;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+.lc-stage {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s5);
+  padding: var(--s7) var(--s6);
+  text-align: center;
+}
+/* Centred vertically, but scrolls from the top when it does not fit. */
+.lc-stage > :first-child {
+  margin-top: auto;
+}
+.lc-stage > :last-child {
+  margin-bottom: auto;
+}
+
+.lc-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t-xs);
+  color: var(--lc-ivory-2);
+}
+.lc-clock {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.lc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--lc-ivory);
+  transition: background-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.lc[data-phase='live'] .lc-dot {
+  background: var(--lc-ivory);
+}
+.lc[data-phase='ended'] .lc-dot,
+.lc[data-phase='failed'] .lc-dot {
+  opacity: 0.4;
+}
+
+.lc-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+.lc-status {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 5.4vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--lc-ivory);
+  text-wrap: balance;
+}
+html[lang='ur'] .lc-status {
+  font-family: var(--font-urdu);
+  font-size: clamp(28px, 4.2vw, 44px);
+  line-height: 1.75;
+  letter-spacing: 0;
+}
+.lc-substatus {
+  margin-top: var(--s4);
+  font-size: var(--t-md);
+  color: var(--lc-ivory-2);
+}
+
+/* The level meter: a hairline with a thin ivory bar that opens from the centre with the voice. */
+.lc-meter {
+  --lvl: 0;
+  position: relative;
+  display: block;
+  width: min(260px, 64vw);
+  height: 7px;
+  margin-top: var(--s5);
+}
+.lc-meter::before,
+.lc-meter::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+}
+.lc-meter::before {
+  top: 3px;
+  height: 1px;
+  background: var(--lc-frame);
+}
+.lc-meter::after {
+  top: 2px;
+  height: 3px;
+  background: var(--lc-ivory);
+  transform: scaleX(calc(0.02 + var(--lvl) * 0.98));
+  transition: transform 90ms linear, opacity var(--dur) var(--ease);
+}
+.lc[data-phase='connecting'] .lc-meter::after {
+  opacity: 0.4;
+}
+/* Thinking / reconnecting: the bar breathes slowly instead of following a voice. */
+.lc[data-phase='live'][data-talk='thinking'] .lc-meter::after,
+.lc[data-phase='live'][data-talk='reconnecting'] .lc-meter::after {
+  transform: scaleX(0.3);
+  animation: lc-breathe 1.4s var(--ease) infinite alternate;
+}
+.lc[data-talk='reconnecting'] .lc-dot {
+  animation: lc-blink 1.2s steps(1, end) infinite;
+}
+@keyframes lc-breathe {
+  from {
+    transform: scaleX(0.08);
+    opacity: 0.55;
+  }
+  to {
+    transform: scaleX(0.42);
+    opacity: 1;
+  }
+}
+@keyframes lc-blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lc[data-phase='live'][data-talk='thinking'] .lc-meter::after,
+  .lc[data-phase='live'][data-talk='reconnecting'] .lc-meter::after,
+  .lc[data-talk='reconnecting'] .lc-dot {
+    animation: none;
+  }
+}
+.lc[data-phase='ended'] .lc-meter,
+.lc[data-phase='failed'] .lc-meter {
+  visibility: hidden;
+}
+
+/* Captions: what you said and what Hisaab said, as two labeled cells in an ivory hairline frame. */
+.lc-captions {
+  width: min(560px, 100%);
+  border: 1px solid var(--lc-frame);
+  text-align: start;
+}
+.lc-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: var(--s4) var(--s5);
+}
+.lc-cell + .lc-cell {
+  border-top: 1px solid var(--lc-frame);
+}
+.lc-you {
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--lc-ivory-2);
+  overflow-wrap: anywhere;
+}
+.lc-ai {
+  font-family: var(--font-serif);
+  font-size: var(--t-xl);
+  line-height: 1.4;
+  color: var(--lc-ivory);
+  overflow-wrap: anywhere;
+}
+.lc-you.is-urdu,
+.lc-ai.is-urdu {
+  font-family: var(--font-urdu);
+  line-height: 2.1;
+}
+.lc-ai.is-urdu {
+  font-size: 20px;
+}
+
+/* Typing instead of speaking: an ivory hairline field on the night sky. */
+.lc-type {
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  text-align: start;
+}
+.lc-type-row {
+  display: flex;
+  gap: var(--s2);
+}
+.lc-type-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 var(--s4);
+  border: 1px solid var(--lc-frame);
+  border-radius: var(--r);
+  background: color-mix(in srgb, var(--sky-night) 55%, transparent);
+  color: var(--lc-ivory);
+  font: inherit;
+  font-size: var(--t-md);
+}
+.lc-type-input::placeholder {
+  color: var(--lc-ivory-2);
+  opacity: 0.75;
+}
+.lc-type-input:hover {
+  border-color: var(--lc-ivory-2);
+}
+.lc-type-input:focus-visible {
+  outline: 2px solid var(--lc-ivory);
+  outline-offset: 2px;
+}
+html[lang='ur'] .lc-type-input {
+  font-family: var(--font-urdu);
+  line-height: 2;
+}
+.lc-type-send {
+  flex: none;
+}
+
+/* Mute toggle: a pill switch */
+.lc-mute {
+  position: relative;
+  width: min(560px, 100%);
+  min-height: 44px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  text-align: start;
+  cursor: pointer;
+}
+.lc-switch-input {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: 40px;
+  height: 24px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.lc-switch {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 24px;
+  border: 1px solid var(--lc-frame);
+  border-radius: var(--r-pill);
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.lc-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  inset-inline-start: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--lc-ivory);
+  transition: inset-inline-start var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+.lc-switch-input:checked + .lc-switch {
+  background: var(--lc-ivory);
+  border-color: var(--lc-ivory);
+}
+.lc-switch-input:checked + .lc-switch::after {
+  inset-inline-start: 19px;
+  background: var(--sky-night);
+}
+.lc-switch-input:focus-visible + .lc-switch {
+  outline: 2px solid var(--lc-ivory);
+  outline-offset: 3px;
+}
+.lc-mute-title {
+  display: block;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--lc-ivory);
+}
+.lc-mute-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--lc-ivory-2);
+}
+
+.lc-again {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s3);
+}
+
+/* ---------- labeled ivory cards: what Hisaab wrote, and notices ---------- */
+.lc-card {
+  padding: var(--s3) var(--s4) var(--s4);
+  background: var(--paper);
+  color: var(--ink);
+  text-align: start;
+  animation: lc-rise 220ms var(--ease);
+}
+.lc-card :focus-visible {
+  outline-color: var(--ink);
+}
+.lc-notice {
+  width: min(560px, 100%);
+}
+.lc-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: var(--s1);
+}
+.lc-card-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.lc-notice .lc-card-label {
+  margin-bottom: var(--s1);
+}
+html[lang='ur'] .lc-card-label {
+  font-size: var(--t-xs);
+  line-height: 1.9;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.lc-card[data-tone='owed'] .lc-card-label {
+  color: var(--owed);
+}
+.lc-card[data-tone='paid'] .lc-card-label {
+  color: var(--paid);
+}
+.lc-card[data-tone='ask'] .lc-card-label,
+.lc-card[data-tone='warn'] .lc-card-label {
+  color: var(--warn);
+}
+.lc-card-time {
+  flex: none;
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  white-space: nowrap;
+  /* "3:40 PM" stays in that order in the Urdu UI. */
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.lc-card-main {
+  font-size: var(--t-md);
+  font-weight: 600;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.lc-notice .lc-card-main {
+  font-weight: 500;
+}
+.lc-card-sub {
+  margin-top: 2px;
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+html[lang='ur'] .lc-card-main,
+html[lang='ur'] .lc-card-sub {
+  line-height: 1.9;
+}
+.lc-card-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s3);
+}
+.lc-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  max-width: 100%;
+  min-height: 36px;
+  padding: 0 var(--s4);
+  border: 1px solid var(--ink);
+  border-radius: var(--r-pill);
+  color: var(--ink);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+.lc-card-link:hover {
+  background: var(--surface-sunk);
+  color: var(--ink);
+}
+
+/* ---------- the khata column ---------- */
+.lc-log {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding: var(--s6) var(--s5);
+  border-inline-start: 1px solid var(--lc-hair);
+  background: var(--lc-chrome);
+}
+.lc-log-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding-bottom: var(--s3);
+  border-bottom: 1px solid var(--lc-hair);
+}
+.lc-count {
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--lc-ivory-2);
+}
+.lc-log-empty {
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--lc-ivory-2);
+}
+html[lang='ur'] .lc-log-empty {
+  line-height: 2;
+}
+.lc-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+@keyframes lc-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes lc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (min-width: 900px) {
+  /* The sky fills the stage; the 360px khata column beside it is solid night. */
+  .lc-sky {
+    margin-inline-end: 360px;
+  }
+}
+@media (max-width: 899px) {
+  .lc-body {
+    display: block;
+    overflow-y: auto;
+  }
+  .lc-stage {
+    overflow: visible;
+    padding: var(--s7) var(--s4) var(--s6);
+  }
+  .lc-log {
+    overflow: visible;
+    padding: var(--s5) var(--s4) max(var(--s6), env(safe-area-inset-bottom));
+    border-inline-start: 0;
+    border-top: 1px solid var(--lc-hair);
+    background: color-mix(in srgb, var(--lc-chrome) 82%, transparent);
+  }
+}
+@media (max-width: 599px) {
+  .lc-top {
+    grid-template-areas:
+      'title action'
+      'context context';
+    row-gap: var(--s1);
+    padding-inline: var(--s4);
+  }
+  .lc-pill {
+    padding-inline: var(--s4);
+  }
+  .lc-cell {
+    padding-inline: var(--s4);
+  }
+  .lc-ai {
+    font-size: var(--t-lg);
+  }
+}
+@media (pointer: coarse) {
+  .lc-card-link {
+    min-height: 44px;
+  }
+}
+
+/* ================= Mic recorder ("Speak an entry") ================= */
+.mic {
+  display: inline-flex;
+  max-width: 100%;
+}
+.mic > .btn {
+  flex: 1 1 auto;
+}
+
+/* Recording: a square ink frame holding the time, a hairline level meter and the two actions. */
+.mic-rec {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s3);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s1);
+  padding-inline-start: var(--s4);
+  border: 1px solid var(--frame);
+  background: var(--surface);
+}
+.mic-rec-info {
+  display: flex;
+  align-items: center;
+  gap: var(--s2) var(--s3);
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.mic-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: mic-blink 1.2s steps(1, end) infinite;
+}
+@keyframes mic-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+.mic-rec-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+html[lang='ur'] .mic-rec-label {
+  font-size: var(--t-xs);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.mic-time {
+  font-size: var(--t-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.mic-time-max {
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.mic-level {
+  position: relative;
+  flex: 1 1 72px;
+  min-width: 56px;
+  height: 7px;
+}
+.mic-level::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 3px;
+  height: 1px;
+  background: var(--rule-strong);
+}
+.mic-level span {
+  position: absolute;
+  inset-inline: 0;
+  top: 2px;
+  height: 3px;
+  background: var(--ink);
+  transform: scaleX(0.03);
+  transform-origin: left center;
+}
+[dir='rtl'] .mic-level span {
+  transform-origin: right center;
+}
+.mic-rec-actions {
+  display: flex;
+  gap: var(--s1);
+  margin-inline-start: auto;
+}
+
+/* Waiting: a small numbered list of steps, like the contents of a post. */
+.mic-wait {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.mic-steps {
+  border-top: 1px solid var(--frame);
+}
+.mic-step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 44px;
+  padding-block: var(--s2);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-3);
+}
+.mic-step[data-state='done'] {
+  color: var(--ink-2);
+}
+.mic-step[data-state='now'] {
+  color: var(--ink);
+  font-weight: 600;
+}
+.mic-step-n {
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.mic-step-n::before {
+  content: '[';
+}
+.mic-step-n::after {
+  content: ']';
+}
+html[lang='ur'] .mic-step-text {
+  line-height: 1.9;
+}
+.mic-spin {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  border-inline-end-color: transparent;
+  animation: mic-spin 0.8s linear infinite;
+}
+@keyframes mic-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.mic-wait-note,
+.mic-text {
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+
+/* Result: labeled cells in one ink frame — you said / Hisaab wrote / reply (the reply is the sage one). */
+.mic-cells {
+  border: 1px solid var(--frame);
+}
+.mic-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+}
+.mic-cell + .mic-cell {
+  border-top: 1px solid var(--frame);
+}
+.mic-cell-reply {
+  background: var(--sage);
+}
+.mic-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.mic-cell-reply .mic-label {
+  color: var(--ink);
+}
+html[lang='ur'] .mic-label {
+  font-family: var(--font-urdu);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  line-height: 1.9;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.mic-transcript {
+  font-size: var(--t-xl);
+  line-height: 2;
+}
+.mic-roman {
+  font-family: var(--font-serif);
+  font-size: var(--t-md);
+  font-style: italic;
+  color: var(--ink-2);
+}
+.mic-result {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  padding-block: var(--s2);
+}
+.mic-result:first-child {
+  padding-top: 0;
+}
+.mic-result + .mic-result {
+  border-top: 1px solid var(--rule);
+}
+.mic-result-main {
+  flex: 1;
+  min-width: 0;
+}
+.mic-result-text {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t-md);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.mic-result[data-tone='ask'] .mic-result-text {
+  font-weight: 500;
+  color: var(--warn);
+}
+.mic-result-meta {
+  font-size: var(--t-sm);
+  color: var(--ink-3);
+}
+html[lang='ur'] .mic-result-text,
+html[lang='ur'] .mic-result-meta {
+  line-height: 1.9;
+}
+.mic-struck {
+  text-decoration: line-through;
+  color: var(--ink-3);
+}
+.mic-open {
+  align-self: flex-start;
+  max-width: 100%;
+}
+/* Long customer names end in an ellipsis instead of pushing the button out of the sheet. The padding/negative
+   margin pair gives tall Nastaliq glyphs room inside the clip without changing the button's height. */
+.mic-open > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-block: 0.5em;
+  margin-block: -0.5em;
+}

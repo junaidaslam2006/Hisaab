@@ -1,0 +1,505 @@
+/* ================= Customer page (.cd-page) =================
+   Read like a model card / statement: eyebrow, serif name, serif lead from the khata, action pills, a row of
+   labelled cells; then "Statement" (ink grid, sage running-balance column, totals row) and "Manage" (square frames). */
+
+.cd-page {
+  /* Rust and olive darkened just enough to keep 4.5:1 on the sage highlight. */
+  --owed-on-sage: color-mix(in srgb, var(--owed) 80%, var(--ink));
+  --paid-on-sage: color-mix(in srgb, var(--paid) 80%, var(--ink));
+  min-width: 0;
+}
+
+/* ---------- back link ---------- */
+.cd-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 44px;
+  margin-block: calc(-1 * var(--s3)) var(--s4);
+  padding-inline-end: var(--s2);
+  color: var(--ink-2);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+.cd-back .icon {
+  width: 16px;
+  height: 16px;
+}
+.cd-back:hover {
+  color: var(--ink);
+}
+.cd-back:hover > span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+:where(html[lang='ur']) .cd-back {
+  font-size: 15px;
+}
+
+/* ---------- header ---------- */
+.cd-header .page-header-text {
+  max-width: 860px;
+}
+.cd-title {
+  overflow-wrap: anywhere;
+}
+.cd-title .latin {
+  font-family: var(--font-serif);
+}
+/* A Latin name in the Urdu UI keeps the Latin title proportions. */
+:where(html[lang='ur']) .cd-title.is-latin {
+  font-weight: 400;
+  font-size: clamp(34px, 4.6vw, 52px);
+  line-height: 1.15;
+}
+.cd-title-alt {
+  margin-block-start: var(--s2);
+  color: var(--ink-2);
+}
+.cd-title-alt .ur {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.9;
+}
+.cd-title-alt .latin {
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.3;
+}
+.cd-lead-amt {
+  white-space: nowrap;
+}
+.cd-lead-amt.owed {
+  color: var(--owed);
+}
+.cd-lead-amt.paid {
+  color: var(--paid);
+}
+.cd-lead-amt.payable {
+  color: var(--lst-payable);
+}
+:where(html[lang='ur']) .cd-lead-amt {
+  font-family: var(--font-serif);
+}
+.cd-cells {
+  width: 100%;
+  max-width: var(--wide);
+  margin-block-start: var(--s7);
+}
+.cd-quiet {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+@media (max-width: 719px) {
+  .cd-cells {
+    margin-block-start: var(--s6);
+  }
+}
+
+/* ---------- statement: shared values ---------- */
+.cd-say {
+  font-weight: 600;
+}
+.cd-page .money.cd-struck {
+  color: var(--ink-3);
+  font-weight: 500;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+.cd-word {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.cd-word.paid {
+  color: var(--paid);
+}
+.cd-word.payable {
+  color: var(--lst-payable);
+}
+:where(html[lang='ur']) .cd-word {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.cd-dash {
+  color: var(--ink-2);
+}
+/* On the sage highlight: darker rust/olive, ink words. */
+.cd-page :is(.hl, .cd-line-bal) .money.owed {
+  color: var(--owed-on-sage);
+}
+.cd-page :is(.hl, .cd-line-bal) .money.paid,
+.cd-page :is(.hl, .cd-line-bal) .cd-word.paid {
+  color: var(--paid-on-sage);
+}
+.cd-page :is(.hl, .cd-line-bal) .cd-word:not(.paid) {
+  color: var(--ink);
+}
+.cd-caption {
+  margin-block-start: var(--s4);
+}
+/* A cancelled entry takes focus after the cancel (its Cancel button is gone); draw the ring inside the frame. */
+:is(.cd-table tr, .cd-line):focus-visible {
+  outline-offset: -2px;
+}
+
+/* ---------- statement: desktop grid table ---------- */
+.cd-table {
+  min-width: 640px;
+}
+.cd-table .cd-date {
+  width: 1%;
+  white-space: nowrap;
+}
+.cd-table .cd-amt {
+  width: 1%;
+  min-width: 124px;
+  white-space: nowrap;
+}
+.cd-table .cd-word {
+  display: block;
+  margin-block-start: 2px;
+}
+.cd-table tfoot :is(th, td) {
+  border-block-start-width: 2px;
+  background: var(--surface-sunk);
+  font-weight: 600;
+}
+.cd-table tfoot .hl {
+  background: var(--sage);
+}
+
+/* entry details (table cell and phone line) */
+.cd-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+.cd-detail-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.cd-detail-note {
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.cd-void {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s2);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.cd-voice {
+  align-self: stretch;
+}
+.cd-voice .voice {
+  width: 100%;
+  min-width: 0;
+  max-width: 300px;
+}
+.cd-heard {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 48ch;
+  color: var(--ink);
+}
+.cd-heard .ur {
+  font-size: var(--t-md);
+  line-height: 2;
+}
+.cd-heard-roman {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.cd-detail-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px var(--s3);
+  align-self: stretch;
+}
+.cd-source .icon {
+  width: 14px;
+  height: 14px;
+}
+.btn.cd-cancel {
+  color: var(--ink-2);
+}
+.btn.cd-cancel:hover:not(:disabled) {
+  color: var(--owed);
+}
+:where(html[lang='ur']) .cd-void {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ---------- statement: phone lines ---------- */
+.cd-lines {
+  border: 1px solid var(--frame);
+  background: var(--surface);
+}
+.cd-line + .cd-line {
+  border-block-start: 1px solid var(--frame);
+}
+.cd-line-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: 14px var(--s4) 0;
+}
+.cd-line-when {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.cd-line-date {
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.cd-line > .cd-detail {
+  padding: var(--s2) var(--s4) var(--s3);
+}
+.cd-line-bal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: 10px var(--s4);
+  border-block-start: 1px solid var(--frame);
+  background: var(--sage);
+}
+.cd-line-bal .label {
+  color: var(--ink);
+}
+.cd-line-bal-amt {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 2px var(--s2);
+}
+.cd-line.is-void {
+  color: var(--ink-3);
+}
+.cd-line.is-void .cd-line-bal {
+  background: var(--surface-sunk);
+}
+.cd-line.is-void .cd-line-bal .label {
+  color: var(--ink-2);
+}
+.cd-line-totals {
+  margin-block-start: -1px;
+}
+:where(html[lang='ur']) .cd-line-date {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ---------- no entries yet: the sentence to say ---------- */
+.cd-empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+  max-width: var(--reading);
+}
+.cd-empty .quote-text {
+  font-size: var(--t-xl);
+  line-height: 1.35;
+}
+:where(html[lang='ur']) .cd-empty .quote-text {
+  font-size: 21px;
+  line-height: 2;
+}
+.cd-empty-or {
+  color: var(--ink-2);
+}
+
+/* ---------- manage ---------- */
+.cd-manage-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s5);
+}
+@media (min-width: 960px) {
+  .cd-manage-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+  }
+  .cd-edit {
+    grid-row: span 3;
+  }
+}
+.cd-tool .frame-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s4);
+}
+.cd-tool-text {
+  font-family: var(--f-head);
+  font-size: var(--t-md);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.cd-tool-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--warn);
+}
+.cd-tool-warn .icon {
+  margin-block-start: 2px;
+}
+:where(html[lang='ur']) .cd-tool-text {
+  line-height: 2.1;
+}
+:where(html[lang='ur']) .cd-tool-warn {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.cd-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  width: 100%;
+}
+.cd-form-actions {
+  margin-block-start: var(--s2);
+}
+.cd-form input.cd-ur-input {
+  font-family: var(--font-urdu);
+  line-height: 1.9;
+  padding-block: 4px;
+}
+
+/* ---------- footnotes ---------- */
+.cd-notes {
+  max-width: var(--reading);
+  margin-block-start: var(--s9);
+}
+@media (max-width: 719px) {
+  .cd-notes {
+    margin-block-start: var(--s8);
+  }
+}
+
+/* ---------- sheets ---------- */
+.cd-sheet-note {
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .cd-sheet-note {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.cd-sheet-bal {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--s2);
+}
+/* "Merge khatas" must wrap instead of pushing the sheet sideways at 360px. */
+.btn.cd-wrap-btn {
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.3;
+  padding-block: var(--s2);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+:where(html[lang='ur']) .btn.cd-wrap-btn {
+  line-height: 1.8;
+}
+
+/* ---------- loading ---------- */
+.cd-skel-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-block-start: var(--s6);
+}
+.cd-skel-cells {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  max-width: var(--wide);
+  margin-block-start: var(--s7);
+  border: 1px solid var(--frame);
+}
+.cd-skel-cells > div {
+  padding: var(--s3) var(--s5) var(--s4);
+}
+.cd-skel-cells > div + div {
+  border-inline-start: 1px solid var(--frame);
+}
+.cd-skel-table {
+  border: 1px solid var(--frame);
+}
+.cd-skel-row {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 140px;
+  align-items: center;
+  gap: var(--s4);
+  min-height: 64px;
+  padding-inline-start: var(--s4);
+}
+.cd-skel-row + .cd-skel-row {
+  border-block-start: 1px solid var(--frame);
+}
+.cd-skel-bal {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: stretch;
+  padding-inline: var(--s4);
+  border-inline-start: 1px solid var(--frame);
+  background: var(--sage);
+}
+@media (max-width: 719px) {
+  .cd-skel-cells {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cd-skel-cells > div:nth-child(3) {
+    border-inline-start: 0;
+  }
+  .cd-skel-cells > div:nth-child(n + 3) {
+    border-block-start: 1px solid var(--frame);
+  }
+  .cd-skel-row {
+    grid-template-columns: 56px minmax(0, 1fr) 108px;
+    gap: var(--s3);
+  }
+}
+
+/* ---------- lists: eyebrow with the sample badge, the List cell, supplier colours on sage ---------- */
+.cd-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s3);
+}
+.cd-list-link {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration-color: var(--ink-4);
+}
+.cd-list-link.lst-payable {
+  color: var(--lst-payable);
+}
+.cd-page :is(.hl, .cd-line-bal) :is(.money, .cd-word).payable {
+  color: var(--lst-payable);
+}

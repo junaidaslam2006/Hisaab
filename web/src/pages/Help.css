@@ -1,0 +1,194 @@
+/* Help — a launch post for shopkeepers: a 640px reading column centred in an 840px measure,
+   ink-hairline phrase tables (Hisaab's column in sage), get-started pills, footnotes. */
+.help-page {
+  width: 100%;
+  max-width: var(--wide);
+  margin-inline: auto;
+}
+.help-page > :not(.help-section, .section-rail, .sr-only),
+.help-section > :not(.help-table, .help-table-loading) {
+  max-width: var(--reading);
+  margin-inline: auto;
+}
+
+/* Contents in the reference's "[1] ········ Label" form, in ink on the paper. */
+.help-page .toc.toc-hero {
+  max-width: 420px;
+  color: var(--ink);
+}
+:where(html[lang='ur']) .help-page .toc.toc-hero {
+  font-size: 16px;
+}
+
+/* ---------- reading text ---------- */
+.help-intro > p,
+.help-section > p,
+.help-try > p {
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.help-intro > p + p {
+  margin-block-start: 1em;
+}
+.help-name {
+  font-weight: 600;
+}
+
+/* ---------- sections ---------- */
+.help-section {
+  margin-block-start: var(--s8);
+}
+.help-section > h2 + * {
+  margin-block-start: var(--s4);
+}
+.help-section > p + p {
+  margin-block-start: 1em;
+}
+.help-section > :is(.help-table, .help-table-loading) {
+  margin-block-start: var(--s6);
+}
+.help-section > :is(.help-table, .help-table-loading) + p {
+  margin-block-start: var(--s6);
+}
+
+/* ---------- phrase tables ---------- */
+.help-page .help-table thead th {
+  width: 50%;
+}
+.help-page .help-table tbody th {
+  font-weight: 400;
+}
+.help-tag {
+  display: block;
+  margin-block-end: var(--s1);
+}
+.help-ur {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  font-size: 20px;
+  line-height: 2;
+  color: var(--ink);
+}
+.help-roman {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-align: match-parent;
+}
+.help-roman.solo {
+  font-size: var(--t-md);
+  font-weight: 600;
+  color: var(--ink);
+}
+.help-act {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.help-does-title {
+  display: block;
+  font-weight: 600;
+}
+.help-does-body {
+  display: block;
+  margin-block-start: 2px;
+}
+.help-page bdi.num,
+.help-ur bdi {
+  white-space: nowrap;
+}
+
+.help-table-loading {
+  border: 1px solid var(--frame);
+}
+.help-table-loading-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s4);
+  padding: var(--s4);
+}
+.help-table-loading-row + .help-table-loading-row {
+  border-block-start: 1px solid var(--frame);
+}
+
+/* ---------- try it now (the reference's "Get started") ---------- */
+.help-try {
+  margin-block-start: var(--s9);
+}
+.help-try > p {
+  margin-block-start: var(--s3);
+}
+.help-try > .cluster {
+  margin-block-start: var(--s5);
+}
+
+/* ---------- end matter ---------- */
+.help-page > .endnotes {
+  margin-block-start: var(--s9);
+}
+.help-page > .endnotes + .endnotes {
+  margin-block-start: var(--s8);
+}
+
+/* ---------- Urdu ---------- */
+:where(html[lang='ur']) :is(.help-intro > p, .help-section > p, .help-try > p) {
+  line-height: 2.1;
+}
+:where(html[lang='ur']) .help-act {
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+/* ---------- phones: each phrase becomes a card, Hisaab's half in sage ---------- */
+@media (max-width: 719px) {
+  .help-section {
+    margin-block-start: var(--s7);
+  }
+  .help-page .help-table.stack-sm :is(th, td) {
+    display: block;
+    padding: var(--s3) var(--s4);
+    text-align: start;
+  }
+  .help-page .help-table.stack-sm td {
+    border-block-start: 1px solid var(--frame);
+  }
+  .help-page .help-table.stack-sm td[data-label]::before {
+    display: block;
+    margin-block-end: var(--s1);
+    color: var(--ink);
+    font-size: var(--t-2xs);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  :where(html[lang='ur']) .help-page .help-table.stack-sm td[data-label]::before {
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .help-table-loading-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s2);
+  }
+  .help-try,
+  .help-page > .endnotes {
+    margin-block-start: var(--s8);
+  }
+  .help-try .btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* Pashto phrases are set in Naskh (shared .ps); Naskh wants a touch less size and line height than Nastaliq. */
+.help-ur.help-ps {
+  font-size: 19px;
+  line-height: 1.85;
+}

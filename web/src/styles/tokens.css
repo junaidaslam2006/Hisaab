@@ -1,0 +1,111 @@
+/* Hisaab design tokens — "launch post" editorial system. See web/DESIGN.md. Never hard-code hex in components. */
+:root {
+  /* Paper and ink */
+  --paper: #faf9f5;          /* page */
+  --paper-2: #f5f4ed;        /* nav pills, quiet fills */
+  --surface: #faf9f5;        /* frames sit on the paper itself */
+  --surface-raised: #ffffff; /* inputs, sheets, popovers */
+  --surface-sunk: #f0eee6;   /* secondary pills, table heads, inputs at rest */
+  --rule: #e8e6dc;           /* soft dividers between rows */
+  --rule-strong: #d1cfc5;    /* input borders, heavier dividers */
+  --rule-heavy: #c2c0b6;     /* the 2px section rule above footnotes */
+  --frame: #141413;          /* ink hairline around figures, tables, cards */
+  --ink: #141413;            /* primary text  (17.8:1 on paper) */
+  --ink-2: #5e5d59;          /* secondary text (6.3:1) */
+  --ink-3: #6f6e68;          /* meta text, still >= 4.5:1 */
+  --ink-4: #87867f;          /* decorative only: leaders, ticks, disabled (3.5:1) */
+  --ink-inverse: #faf9f5;
+
+  /* Washes for wide figures and highlights */
+  --sage: #ced6bf;           /* the highlight: selected column, featured card */
+  --sage-ink: #788c5d;       /* border/marker that goes with sage */
+  --heather: #cbcadb;
+  --sky-wash: #c9d6e8;
+  --sand: #e6d7c8;
+  --oat: #e3dacc;
+
+  /* Painted hero looks */
+  --sky-day: #7ea9de;
+  --sky-dusk: #dcc4b3;
+  --sky-night: #1a2237;
+
+  /* Primary actions are ink pills. --brand* names kept so older page CSS still resolves. */
+  --brand: #141413;
+  --brand-hover: #30302e;
+  --brand-tint: #f0eee6;
+  --brand-ink: #faf9f5;
+
+  /* Meaning — always paired with a word or sign, never color alone */
+  --owed: #a63d2a;           /* udhaar: money owed to the shop (6.0:1) */
+  --owed-tint: #f3e3dc;
+  --owed-soft: #e3b8a8;      /* chart markers */
+  --paid: #4b6a2f;           /* received (5.9:1) */
+  --paid-tint: #e3e9d6;
+  --paid-soft: #ced6bf;
+  --warn: #8a5a00;           /* overdue / needs attention (5.6:1) */
+  --warn-tint: #f3e8cf;
+  --danger: #a63d2a;
+
+  /* Text on --sage. The usual secondary greys and meaning colours dip under 4.5:1 there (ink-2 4.4, ink-3 3.4,
+     owed 4.2, paid 4.1, warn 4.0), so sage surfaces swap these in (see "Sage surfaces" in components.css). */
+  --on-sage-2: color-mix(in srgb, var(--ink-2) 80%, var(--ink));   /* labels, sub-labels, meta: 5.5:1 */
+  --on-sage-owed: color-mix(in srgb, var(--owed) 80%, var(--ink)); /* 5.4:1 */
+  --on-sage-paid: color-mix(in srgb, var(--paid) 80%, var(--ink)); /* 5.2:1 */
+  --on-sage-warn: color-mix(in srgb, var(--warn) 80%, var(--ink)); /* 5.1:1 */
+
+  --focus: #141413;
+  --shadow-overlay: 0 24px 64px rgba(20, 20, 19, 0.16), 0 2px 8px rgba(20, 20, 19, 0.06);
+
+  /* Shape: frames are square, controls are pills */
+  --r-frame: 0px;
+  --r-sm: 6px;
+  --r: 8px;
+  --r-lg: 12px;
+  --r-pill: 999px;
+  --hair: 1px;
+
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+  --s9: 96px;
+  --s10: 128px;
+
+  /* Type scale */
+  --t-2xs: 11px;
+  --t-xs: 13px;
+  --t-sm: 14px;
+  --t-md: 16px;
+  --t-body: 17px;            /* serif reading text */
+  --t-lg: 18px;
+  --t-xl: 22px;
+  --t-2xl: 28px;             /* lead paragraph */
+  --t-3xl: 32px;             /* h2 */
+  --t-4xl: 44px;
+  --t-5xl: 56px;
+  --t-6xl: 72px;             /* hero h1 */
+
+  --font-serif: 'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font: var(--font-sans);
+  --font-urdu: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
+  /* Pashto (ځ ۍ ې ښ ږ …) in Naskh: .ps / lang="ps" (base.css) */
+  --font-naskh: 'Noto Naskh Arabic', 'Segoe UI', Tahoma, serif;
+
+  /* Measures */
+  --reading: 640px;          /* article column */
+  --wide: 840px;             /* figures, tables */
+  --page: 1080px;            /* app pages */
+  --header-h: 64px;
+  --tabbar-h: 64px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur: 200ms;
+
+  color-scheme: light;
+}

@@ -1,0 +1,168 @@
+/* Lists and suppliers, shared by the Customers, customer, Today pages and the entry / reminder sheets.
+   "You owe" (money the shop owes a supplier) has its own colour: a slate blue mixed from the sky and ink tokens.
+   It is never udhaar rust or received olive, and it always comes with the words "you owe". 7.0:1 on paper,
+   4.9:1 on sage, 5.8:1 on its own tint. */
+:root {
+  --lst-payable: color-mix(in srgb, var(--sky-day) 45%, var(--ink));
+  --lst-payable-tint: color-mix(in srgb, var(--sky-wash) 55%, var(--paper));
+}
+
+.money.payable {
+  color: var(--lst-payable);
+}
+.lst-payable {
+  color: var(--lst-payable);
+}
+
+/* A person's list, as a small hairline pill ("Factory wale"); suppliers lists get the payable colour. */
+.lst-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink-2);
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.lst-chip.is-suppliers {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lst-payable) 45%, transparent);
+  background: var(--lst-payable-tint);
+  color: var(--lst-payable);
+}
+:where(html[lang='ur']) .lst-chip {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* "Sample": demo data the owner added from Settings. Sand, so it never reads as money. */
+.lst-sample {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  min-height: 20px;
+  padding: 0 7px;
+  border-radius: var(--r-pill);
+  background: var(--sand);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+:where(html[lang='ur']) .lst-sample {
+  font-size: 12px;
+  line-height: 1.8;
+  text-transform: none;
+}
+
+/* The word that says what a supplier balance means ("you owe"), under or beside the amount. */
+.lst-word {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lst-payable);
+}
+:where(html[lang='ur']) .lst-word {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* ---------- "Remind everyone in this list" sheet: one row per person who owes ---------- */
+.lst-remind {
+  border: 1px solid var(--frame);
+  background: var(--surface);
+}
+.lst-remind-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--s2) var(--s4);
+  min-height: 60px;
+  padding: var(--s2) var(--s4);
+}
+.lst-remind-row + .lst-remind-row {
+  border-block-start: 1px solid var(--rule);
+}
+.lst-remind-who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.lst-remind-name {
+  overflow: hidden;
+  font-family: var(--f-ui);
+  font-size: 15px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lst-remind-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--s3);
+  color: var(--ink-3);
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+}
+.lst-remind-opened {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--paid);
+  font-weight: 600;
+}
+.lst-remind-act {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.lst-remind-note {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+:where(html[lang='ur']) .lst-remind-name {
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .lst-remind-meta {
+  font-size: 14px;
+  line-height: 1.8;
+}
+:where(html[lang='ur']) .lst-remind-note {
+  font-size: 15px;
+  line-height: 1.9;
+}
+/* Phones: name and amount on the first line, the WhatsApp pill across the second. */
+@media (max-width: 519px) {
+  .lst-remind-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: var(--s3);
+  }
+  .lst-remind-act {
+    grid-column: 1 / -1;
+  }
+  .lst-remind-act .btn {
+    width: 100%;
+  }
+}
+/* Wider screens: one width for both pills, so the amounts line up. */
+@media (min-width: 520px) {
+  .lst-remind-act .btn {
+    min-width: 132px;
+    justify-content: center;
+  }
+}

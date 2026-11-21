@@ -1,0 +1,510 @@
+/* Messages — every note the shop sent Hisaab, set like a launch post:
+   header + day contents, a framed composer, text tabs, serif day headings, one square ink card per message. */
+
+.msg-page {
+  min-width: 0;
+}
+
+/* Everything under the header sits on one column, up to the figure width. */
+.msg-page > :is(.msg-compose, .msg-feed, .msg-first, .msg-more, .banner) {
+  max-width: var(--wide);
+}
+.msg-page > :is(.msg-feed, .msg-first, .banner) {
+  margin-block-start: var(--s7);
+}
+.msg-page > .msg-first {
+  margin-block-start: var(--s8);
+}
+.msg-page > .footnotes {
+  max-width: var(--reading);
+  margin-block-start: var(--s9);
+}
+
+/* ---------- composer: "Send a note from here" ---------- */
+.msg-compose .frame-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s3);
+}
+.msg-compose-form {
+  display: flex;
+  gap: var(--s2);
+  flex: 1 1 340px;
+  min-width: 0;
+}
+.msg-compose-form .input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 48px;
+}
+.msg-compose-form .btn {
+  flex: none;
+}
+.msg-compose .mic {
+  flex: none;
+}
+/* While recording, the recorder's ink strip takes its own full row. */
+.msg-compose .mic:has(.mic-rec) {
+  flex: 1 1 100%;
+}
+.msg-compose-error {
+  flex: 1 1 100%;
+}
+
+/* ---------- tabs + day sections ---------- */
+.msg-panel {
+  padding-block-start: var(--s5);
+}
+.msg-panel:focus-visible {
+  outline-offset: var(--s2);
+}
+
+.msg-day + .msg-day {
+  margin-block-start: var(--s8);
+}
+.msg-day-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s1) var(--s5);
+  margin-block-end: var(--s5);
+}
+.msg-day-title {
+  font-size: var(--t-2xl);
+  line-height: 1.2;
+}
+.msg-day-date {
+  margin-inline-start: 0.5em;
+  color: var(--ink-3);
+}
+.msg-day-head > .meta {
+  white-space: nowrap;
+}
+
+/* Nastaliq letters crowd a neighbouring Latin digit; give counts a little room in Urdu. */
+:where(html[lang='ur']) .msg-n {
+  margin-inline: 0.2em;
+}
+:where(html[lang='ur']) .msg-page .toc-meta {
+  font-size: 14px;
+}
+:where(html[lang='ur']) .msg-day-title {
+  font-size: 24px;
+  line-height: 1.9;
+}
+
+.msg-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+
+/* ---------- one message: head band · what you said · Hisaab wrote | reply ---------- */
+.msg {
+  min-width: 0;
+}
+/* --ink-3 is 4.2:1 on the amber "Needs a look" wash; labels and meta use --ink-2 there (5.4:1). */
+.msg.tone-warn {
+  --ink-3: var(--ink-2);
+}
+.msg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s1) var(--s4);
+  padding: 10px var(--s5);
+  border-block-end: 1px solid var(--frame);
+}
+.msg-kicker {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.msg-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.msg-status .icon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+}
+.msg-status.is-warn {
+  color: var(--warn);
+}
+
+.msg-said {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s3);
+  min-width: 0;
+  padding: var(--s4) var(--s5) var(--s5);
+}
+.msg-said > * {
+  max-width: 100%;
+}
+
+.msg-photo {
+  display: block;
+  border: 1px solid var(--frame);
+  background: var(--surface-sunk);
+}
+.msg-photo img {
+  width: 240px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* What was typed: serif, with Nastaliq as the fallback for Urdu script. */
+.msg-typed {
+  font-family: var(--font-serif), var(--font-urdu);
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.msg-typed:dir(rtl) {
+  line-height: 2;
+}
+
+/* What Hisaab heard: the Urdu-script line, the Roman line, and a small attribution under them. */
+.msg-heard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s1);
+  min-width: 0;
+}
+.msg-quote {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  max-width: 100%;
+}
+.msg-page .msg-urdu {
+  max-width: 100%;
+  font-size: 24px;
+  line-height: 2.1;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.msg-roman {
+  max-width: 100%;
+  font-family: var(--font-serif);
+  font-size: var(--t-lg);
+  line-height: 1.45;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+/* The cells under the quote: plain sans lines at reading size. */
+.msg-cells .cell-value {
+  font-size: 15px;
+  font-weight: 400;
+}
+:where(html[lang='ur']) .msg-cells .cell-value {
+  font-size: 16px;
+  line-height: 2;
+}
+
+.msg-wrote,
+.msg-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.msg-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.msg-line > .legend-dot {
+  flex: none;
+}
+.msg-line > .msg-mark {
+  position: relative;
+  inset-block-start: 2px;
+  width: 14px;
+  height: 14px;
+  margin-inline: -2px;
+  stroke-width: 2;
+  color: var(--warn);
+}
+.msg-line > span:last-child {
+  min-width: 0;
+}
+.msg-line.is-quiet {
+  color: var(--ink-3);
+}
+:where(html[lang='ur']) .msg-line {
+  line-height: 2;
+}
+.msg-name a,
+.msg-name b {
+  font-weight: 600;
+}
+.msg-name a {
+  color: var(--ink);
+}
+
+/* In-progress: "[1] Listening ✓ — [2] Understanding ● — [3] Replying" */
+.msg-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s3);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.msg-steps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.msg-steps li + li::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  margin-inline-end: 6px;
+  background: var(--rule-strong);
+}
+.msg-steps li[data-state='done'] {
+  color: var(--ink-2);
+}
+.msg-steps li[data-state='now'] {
+  color: var(--ink);
+  font-weight: 600;
+}
+.msg-steps li[data-state='next'] {
+  color: var(--ink-3);
+}
+.msg-steps .icon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+}
+.msg-step-n {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.msg-step-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: msg-blink 1.2s steps(1, end) infinite;
+}
+@keyframes msg-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+:where(html[lang='ur']) .msg-steps {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* Reply: Hisaab's voice note, then the text card behind a toggle. */
+.msg-reply {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s2);
+}
+.msg-reply .voice {
+  width: 100%;
+  max-width: 320px;
+}
+.msg-reply-text {
+  align-self: stretch;
+}
+.msg-reply-text summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--ink-4);
+  text-underline-offset: 3px;
+}
+.msg-reply-text summary:hover {
+  text-decoration-color: currentColor;
+}
+.msg-reply-text summary::-webkit-details-marker {
+  display: none;
+}
+.msg-reply-text summary .icon {
+  transition: transform var(--dur) var(--ease);
+}
+.msg-reply-text[open] summary .icon {
+  transform: rotate(180deg);
+}
+.msg-reply-text .wa-text {
+  margin-block-start: var(--s2);
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--frame);
+  background: var(--surface-raised);
+}
+:where(html[lang='ur']) .msg-reply-text summary {
+  font-size: 15px;
+  line-height: 1.9;
+}
+@media (pointer: coarse) {
+  .msg-reply-text summary {
+    min-height: 44px;
+  }
+}
+
+/* On the sage (newest) card Hisaab's sage voice pill turns paper so it still reads as a control. */
+.msg.tone-sage .voice.reply {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--sage-ink);
+}
+
+/* Loading */
+.msg-skel-cells {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: var(--s4) var(--s5);
+  border-block-start: 1px solid var(--frame);
+}
+
+/* ---------- paging ---------- */
+.msg-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-block-start: var(--s7);
+}
+
+/* ---------- first message (nothing yet) ---------- */
+.msg-first-steps {
+  margin-block-start: var(--s6);
+  border-block-start: 1px solid var(--frame);
+}
+.msg-first-steps > li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: var(--s3);
+  padding-block: var(--s5);
+  border-block-end: 1px solid var(--rule);
+}
+.msg-first-n {
+  padding-block-start: 5px;
+  font-family: var(--font-sans);
+  font-size: var(--t-sm);
+  color: var(--ink-3);
+}
+.msg-page .msg-first-steps h3 {
+  font-size: 20px;
+}
+.msg-first-steps p {
+  margin-block-start: var(--s1);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .msg-first-steps p {
+  line-height: 2.1;
+}
+.msg-first-steps .quote-card {
+  max-width: 520px;
+  margin-block-start: var(--s4);
+}
+/* fit-content keeps each line at the start edge whatever its own direction. */
+.msg-say-ur,
+.msg-say-roman {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+.msg-page .msg-say-ur {
+  font-size: 24px;
+  line-height: 2;
+}
+.msg-say-roman {
+  font-family: var(--font-serif);
+}
+.msg-first-start {
+  margin-block-start: var(--s7);
+}
+.msg-first-start > .cluster {
+  margin-block-start: var(--s4);
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 719px) {
+  /* The tabs do the navigating here; the day contents would push the first message off screen. */
+  .msg-page .page-header > .toc {
+    display: none;
+  }
+  .msg-compose .mic {
+    flex: 1 1 100%;
+  }
+  .msg-day + .msg-day {
+    margin-block-start: var(--s7);
+  }
+  .msg-day-title {
+    font-size: 24px;
+  }
+  .msg-list {
+    gap: var(--s4);
+  }
+  /* Steps stack into a short numbered list instead of wrapping mid-line. */
+  .msg-steps {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .msg-steps li + li::before {
+    content: none;
+  }
+  .msg-head {
+    padding-inline: var(--s4);
+  }
+  .msg-said {
+    padding: var(--s4);
+  }
+  .msg-page .msg-urdu {
+    font-size: 21px;
+  }
+  .msg-roman {
+    font-size: var(--t-body);
+  }
+  .msg-typed {
+    font-size: var(--t-lg);
+  }
+  .msg-skel-cells {
+    padding-inline: var(--s4);
+  }
+  .msg-first-steps > li {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+}
+@media (max-width: 719px) {
+  :where(html[lang='ur']) .msg-day-title {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,2003 @@
+{
+ "version": 1,
+ "notes": "Expected ops: c = existing customer id; new = acceptable spellings of a new person's name; list = list id or acceptable new list names; full = paid off the whole balance (amount must be null). expect \"nothing\" = only chitchat/unclear/help may come back. must_not: write | customer:<id> | type:<op>. Trades: cat = the trade (pharmacy, dairy, hardware, tailor, wholesale, mobile); forms = what the phrase tests. alt = other operation lists that leave the ledger in the same state (e.g. suit 3600 with 2000 advance = credit 3600 + payment 2000, or one credit of 1600); a case passes if expect or any alt matches. Written 31 Oct 2026 by the eval team, not by shopkeepers: dev material, not a held-out set.",
+ "rosters": {
+  "shop": {
+   "lists": [
+    {
+     "id": "l_factory",
+     "name": "Factory Wale",
+     "name_urdu": "فیکٹری والے",
+     "kind": "customers",
+     "aliases": [
+      "Factory"
+     ]
+    },
+    {
+     "id": "l_mohalla",
+     "name": "Mohalla",
+     "name_urdu": "محلہ",
+     "kind": "customers",
+     "aliases": []
+    },
+    {
+     "id": "l_teachers",
+     "name": "Teachers",
+     "name_urdu": "ٹیچرز",
+     "kind": "customers",
+     "aliases": []
+    },
+    {
+     "id": "l_wholesale",
+     "name": "Wholesale",
+     "name_urdu": "ہول سیل",
+     "kind": "customers",
+     "aliases": []
+    },
+    {
+     "id": "l_suppliers",
+     "name": "Suppliers",
+     "name_urdu": "سپلائرز",
+     "kind": "suppliers",
+     "aliases": []
+    }
+   ],
+   "customers": [
+    {
+     "id": "c_umar",
+     "name": "Umar",
+     "name_urdu": "عمر"
+    },
+    {
+     "id": "c_ahmed",
+     "name": "Ahmed",
+     "name_urdu": "احمد"
+    },
+    {
+     "id": "c_bilal",
+     "name": "Bilal",
+     "name_urdu": "بلال"
+    },
+    {
+     "id": "c_naveed",
+     "name": "Naveed",
+     "name_urdu": "نوید"
+    },
+    {
+     "id": "c_asad",
+     "name": "Asad",
+     "name_urdu": "اسد"
+    },
+    {
+     "id": "c_gulkhan",
+     "name": "Gul Khan",
+     "name_urdu": "گل خان"
+    },
+    {
+     "id": "c_zubair",
+     "name": "Zubair",
+     "name_urdu": "زبیر"
+    },
+    {
+     "id": "c_waqas",
+     "name": "Waqas",
+     "name_urdu": "وقاص"
+    },
+    {
+     "id": "c_shahid",
+     "name": "Shahid",
+     "name_urdu": "شاہد"
+    },
+    {
+     "id": "c_ali",
+     "name": "Ali Raza",
+     "name_urdu": "علی رضا"
+    },
+    {
+     "id": "c_imran",
+     "name": "Imran",
+     "name_urdu": "عمران"
+    },
+    {
+     "id": "c_hamid",
+     "name": "Hamid",
+     "name_urdu": "حامد",
+     "list": "l_factory"
+    },
+    {
+     "id": "c_tariq",
+     "name": "Tariq",
+     "name_urdu": "طارق",
+     "list": "l_factory"
+    },
+    {
+     "id": "c_javed",
+     "name": "Javed",
+     "name_urdu": "جاوید",
+     "list": "l_factory"
+    },
+    {
+     "id": "c_saima",
+     "name": "Saima",
+     "name_urdu": "صائمہ",
+     "list": "l_mohalla"
+    },
+    {
+     "id": "c_nasreen",
+     "name": "Nasreen",
+     "name_urdu": "نسرین",
+     "list": "l_mohalla"
+    },
+    {
+     "id": "c_khalid",
+     "name": "Khalid",
+     "name_urdu": "خالد",
+     "list": "l_teachers",
+     "aliases": [
+      "Master Sahab"
+     ]
+    },
+    {
+     "id": "c_irfan",
+     "name": "Irfan",
+     "name_urdu": "عرفان",
+     "list": "l_teachers"
+    },
+    {
+     "id": "c_yasir",
+     "name": "Yasir Store",
+     "name_urdu": "یاسر سٹور",
+     "list": "l_wholesale"
+    },
+    {
+     "id": "c_rehman",
+     "name": "Rehman Traders",
+     "name_urdu": "رحمان ٹریڈرز",
+     "list": "l_suppliers"
+    },
+    {
+     "id": "c_bashir",
+     "name": "Haji Bashir",
+     "name_urdu": "حاجی بشیر",
+     "list": "l_suppliers",
+     "aliases": [
+      "Haji Sahab"
+     ]
+    }
+   ]
+  },
+  "wholesaler": {
+   "lists": [
+    {
+     "id": "l_charsadda",
+     "name": "Charsadda Road",
+     "name_urdu": "چارسدہ روڈ",
+     "kind": "customers",
+     "aliases": []
+    },
+    {
+     "id": "l_suppliers",
+     "name": "Suppliers",
+     "name_urdu": "سپلائرز",
+     "kind": "suppliers",
+     "aliases": []
+    }
+   ],
+   "customers": [
+    {
+     "id": "c_yasir",
+     "name": "Yasir Store",
+     "name_urdu": "یاسر سٹور"
+    },
+    {
+     "id": "c_bismillah",
+     "name": "Bismillah Karyana",
+     "name_urdu": "بسم اللہ کریانہ"
+    },
+    {
+     "id": "c_afridi",
+     "name": "Afridi General Store",
+     "name_urdu": "آفریدی جنرل سٹور"
+    },
+    {
+     "id": "c_gulzar",
+     "name": "Gulzar Khan",
+     "name_urdu": "گلزار خان"
+    },
+    {
+     "id": "c_noor",
+     "name": "Noor Muhammad",
+     "name_urdu": "نور محمد"
+    },
+    {
+     "id": "c_khyber",
+     "name": "Khyber Mart",
+     "name_urdu": "خیبر مارٹ",
+     "list": "l_charsadda"
+    },
+    {
+     "id": "c_saeed",
+     "name": "Saeed Brothers",
+     "name_urdu": "سعید برادرز",
+     "list": "l_charsadda"
+    },
+    {
+     "id": "c_rehman",
+     "name": "Rehman Traders",
+     "name_urdu": "رحمان ٹریڈرز",
+     "list": "l_suppliers"
+    },
+    {
+     "id": "c_bashir",
+     "name": "Haji Bashir",
+     "name_urdu": "حاجی بشیر",
+     "list": "l_suppliers",
+     "aliases": [
+      "Haji Sahab"
+     ]
+    },
+    {
+     "id": "c_shinwari",
+     "name": "Shinwari Distributors",
+     "name_urdu": "شنواری ڈسٹری بیوٹرز",
+     "list": "l_suppliers"
+    }
+   ]
+  }
+ },
+ "text": [
+  {
+   "id": "ph01",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Asad ne 2 strip Panadol aur 1 khansi ka syrup liya, 480 rupay udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_asad",
+     "amount": 480
+    }
+   ]
+  },
+  {
+   "id": "ph02",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Saima baji ke bete ke liye drip aur injection, sawa do hazaar, khate mein likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_saima",
+     "amount": 2250
+    }
+   ]
+  },
+  {
+   "id": "ph03",
+   "cat": "pharmacy",
+   "forms": [
+    "nothing",
+    "roman_urdu"
+   ],
+   "text": "Shahid ki dawai stock mein nahi thi, kal aayegi to de dena",
+   "expect": "nothing"
+  },
+  {
+   "id": "ph04",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount",
+    "quantity_words"
+   ],
+   "text": "Bilal ko do injection lagaye, saadhe chaar sau, udhaar pe",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_bilal",
+     "amount": 450
+    }
+   ]
+  },
+  {
+   "id": "ph05",
+   "cat": "pharmacy",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Umar 3 patte Brufen 270, Naveed 1 Augmentin syrup 560, aur Zubair ne 1000 jama karwaye",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 270
+    },
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 560
+    },
+    {
+     "type": "payment",
+     "c": "c_zubair",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "id": "ph06",
+   "cat": "pharmacy",
+   "forms": [
+    "balance",
+    "roman_urdu"
+   ],
+   "text": "Imran ki dawaiyon ka kitna hisaab baqi hai?",
+   "expect": [
+    {
+     "type": "balance",
+     "c": "c_imran"
+    }
+   ]
+  },
+  {
+   "id": "ph07",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "spoken_amount",
+    "quantity_words"
+   ],
+   "text": "وقاص نے بلڈ پریشر کی گولیوں کے دو پتے ساڑھے سات سو کے ادھار لیے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_waqas",
+     "amount": 750
+    }
+   ]
+  },
+  {
+   "id": "ph08",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "code_mixed"
+   ],
+   "text": "Tariq ki ammi ki sugar ki medicine 1,150 ki, add it to Tariq's account",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_tariq",
+     "amount": 1150
+    }
+   ]
+  },
+  {
+   "id": "ph09",
+   "cat": "pharmacy",
+   "forms": [
+    "payment",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Ahmed ne Easypaisa pe dedh hazaar bhej diye dawai ke",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_ahmed",
+     "amount": 1500
+    }
+   ]
+  },
+  {
+   "id": "ph10",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "new_person",
+    "roman_urdu"
+   ],
+   "text": "Farhan naya customer hai, doctor ki parchi wali dawai 2200 ki, udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "new": [
+      "Farhan"
+     ],
+     "amount": 2200
+    }
+   ]
+  },
+  {
+   "id": "da01",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Saima baji ne 2 litre doodh aur aadha kilo dahi liya, 570 rupay khate mein",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_saima",
+     "amount": 570
+    }
+   ]
+  },
+  {
+   "id": "da02",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "monthly"
+   ],
+   "text": "Nasreen baji ka is mahine ka doodh 6,600 bana, likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_nasreen",
+     "amount": 6600
+    }
+   ]
+  },
+  {
+   "id": "da03",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Umar ne paao makhan aur 1 kilo dahi liya, 650 ka, udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 650
+    }
+   ]
+  },
+  {
+   "id": "da04",
+   "cat": "dairy",
+   "forms": [
+    "nothing",
+    "roman_urdu",
+    "monthly"
+   ],
+   "text": "Imran kehta hai mahine ke aakhir mein doodh ka bill de dega",
+   "expect": "nothing"
+  },
+  {
+   "id": "da05",
+   "cat": "dairy",
+   "forms": [
+    "payment",
+    "full_settlement",
+    "roman_urdu",
+    "monthly"
+   ],
+   "text": "Ahmed ne pichle mahine ke doodh ka saara hisaab chuka diya",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_ahmed",
+     "full": true
+    }
+   ]
+  },
+  {
+   "id": "da06",
+   "cat": "dairy",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Bilal 2 kilo dahi 520, Naveed 3 litre doodh 660, aur Zubair ne 500 wapas kiye",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_bilal",
+     "amount": 520
+    },
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 660
+    },
+    {
+     "type": "payment",
+     "c": "c_zubair",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "id": "da07",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "quantity_words"
+   ],
+   "text": "شاہد نے ڈیڑھ کلو دہی تین سو نوے کا لیا",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_shahid",
+     "amount": 390
+    }
+   ]
+  },
+  {
+   "id": "da08",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Waqas ka dhai sau ka doodh likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_waqas",
+     "amount": 250
+    }
+   ]
+  },
+  {
+   "id": "da09",
+   "cat": "dairy",
+   "forms": [
+    "balance",
+    "roman_urdu"
+   ],
+   "text": "Gul Khan ka doodh ka hisaab kitna ho gaya?",
+   "expect": [
+    {
+     "type": "balance",
+     "c": "c_gulkhan"
+    }
+   ]
+  },
+  {
+   "id": "da10",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "code_mixed",
+    "quantity_words"
+   ],
+   "text": "Tariq took sawa litre milk and 1 packet butter, total 590, on credit",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_tariq",
+     "amount": 590
+    }
+   ]
+  },
+  {
+   "id": "hw01",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words",
+    "spoken_amount"
+   ],
+   "text": "Hamid ne 5 bori cement li, 7 hazaar 500, udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_hamid",
+     "amount": 7500
+    }
+   ]
+  },
+  {
+   "id": "hw02",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Javed ko 20 feet pipe aur 2 kilo keel di, 3,400 khate mein likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_javed",
+     "amount": 3400
+    }
+   ]
+  },
+  {
+   "id": "hw03",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "roman_urdu"
+   ],
+   "text": "Tariq ka rang ka ek dabba 2800 ka, udhaar likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_tariq",
+     "amount": 2800
+    }
+   ]
+  },
+  {
+   "id": "hw04",
+   "cat": "hardware",
+   "forms": [
+    "payment",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Gul Khan ne cement ke 10 hazaar jama karwa diye",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_gulkhan",
+     "amount": 10000
+    }
+   ]
+  },
+  {
+   "id": "hw05",
+   "cat": "hardware",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Hamid 3 bori cement 4500, Javed 1 kilo keel 350, aur Tariq ne 2000 wapas kiye",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_hamid",
+     "amount": 4500
+    },
+    {
+     "type": "credit",
+     "c": "c_javed",
+     "amount": 350
+    },
+    {
+     "type": "payment",
+     "c": "c_tariq",
+     "amount": 2000
+    }
+   ]
+  },
+  {
+   "id": "hw06",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "spoken_amount",
+    "quantity_words"
+   ],
+   "text": "علی رضا نے رنگ کے دو ڈبے ساڑھے پانچ ہزار کے ادھار لیے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_ali",
+     "amount": 5500
+    }
+   ]
+  },
+  {
+   "id": "hw07",
+   "cat": "hardware",
+   "forms": [
+    "balance",
+    "roman_urdu"
+   ],
+   "text": "Javed thekedar ka kitna udhaar hai?",
+   "expect": [
+    {
+     "type": "balance",
+     "c": "c_javed"
+    }
+   ]
+  },
+  {
+   "id": "hw08",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Bilal ne sawa do hazaar ka plumbing ka saman liya",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_bilal",
+     "amount": 2250
+    }
+   ]
+  },
+  {
+   "id": "hw09",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "code_mixed",
+    "quantity_words"
+   ],
+   "text": "Naveed bought 50 feet wire and 4 switches for 1,850 on credit",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 1850
+    }
+   ]
+  },
+  {
+   "id": "hw10",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "new_person",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Ustad Rafiq mistri naya hai, 6 bori cement 9 hazaar ki udhaar di",
+   "expect": [
+    {
+     "type": "credit",
+     "new": [
+      "Rafiq",
+      "Rafiq Mistri",
+      "Rafiq Mistry",
+      "Ustad Rafiq",
+      "Ustad Rafiq Mistri"
+     ],
+     "amount": 9000
+    }
+   ]
+  },
+  {
+   "id": "hw11",
+   "cat": "hardware",
+   "forms": [
+    "nothing",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Hamid ke ghar ka lenter agle hafte hai, tab 40 bori cement lega",
+   "expect": "nothing"
+  },
+  {
+   "id": "tl01",
+   "cat": "tailor",
+   "forms": [
+    "credit",
+    "roman_urdu"
+   ],
+   "text": "Shahid ka kameez shalwar silai 1500, udhaar likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_shahid",
+     "amount": 1500
+    }
+   ]
+  },
+  {
+   "id": "tl02",
+   "cat": "tailor",
+   "forms": [
+    "multi_entry",
+    "advance",
+    "roman_urdu"
+   ],
+   "text": "Umar ke 2 suit silai ke liye diye, 3600 bane, 2000 advance de gaya",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 3600
+    },
+    {
+     "type": "payment",
+     "c": "c_umar",
+     "amount": 2000
+    }
+   ],
+   "alt": [
+    [
+     {
+      "type": "credit",
+      "c": "c_umar",
+      "amount": 1600
+     }
+    ]
+   ]
+  },
+  {
+   "id": "tl03",
+   "cat": "tailor",
+   "forms": [
+    "payment",
+    "advance",
+    "roman_urdu"
+   ],
+   "text": "Bilal ne naye joday ki silai ka 1000 advance diya",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_bilal",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "id": "tl04",
+   "cat": "tailor",
+   "forms": [
+    "multi_entry",
+    "roman_urdu"
+   ],
+   "text": "Naveed ke 2 suit 3200, Asad ka 1 joda 1600, dono ne abhi kuch nahi diya",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 3200
+    },
+    {
+     "type": "credit",
+     "c": "c_asad",
+     "amount": 1600
+    }
+   ]
+  },
+  {
+   "id": "tl05",
+   "cat": "tailor",
+   "forms": [
+    "payment",
+    "urdu_script"
+   ],
+   "text": "عمران نے شلوار قمیض کی سلائی کے آٹھ سو روپے دے دیے",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_imran",
+     "amount": 800
+    }
+   ]
+  },
+  {
+   "id": "tl06",
+   "cat": "tailor",
+   "forms": [
+    "balance",
+    "roman_urdu"
+   ],
+   "text": "Ahmed ke suiton ka kitna baqi hai?",
+   "expect": [
+    {
+     "type": "balance",
+     "c": "c_ahmed"
+    }
+   ]
+  },
+  {
+   "id": "tl07",
+   "cat": "tailor",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Zubair ki sherwani ki silai saadhe chhe hazaar, khate mein likh do",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_zubair",
+     "amount": 6500
+    }
+   ]
+  },
+  {
+   "id": "tl08",
+   "cat": "tailor",
+   "forms": [
+    "multi_entry",
+    "advance",
+    "code_mixed"
+   ],
+   "text": "Ali Raza ka waistcoat order 2,200, he paid 1,000 advance",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_ali",
+     "amount": 2200
+    },
+    {
+     "type": "payment",
+     "c": "c_ali",
+     "amount": 1000
+    }
+   ],
+   "alt": [
+    [
+     {
+      "type": "credit",
+      "c": "c_ali",
+      "amount": 1200
+     }
+    ]
+   ]
+  },
+  {
+   "id": "tl09",
+   "cat": "tailor",
+   "forms": [
+    "nothing",
+    "roman_urdu"
+   ],
+   "text": "Gul Khan ka suit Jumme ko tayyar hoga, tab paise dega",
+   "expect": "nothing"
+  },
+  {
+   "id": "tl10",
+   "cat": "tailor",
+   "forms": [
+    "payment",
+    "roman_urdu"
+   ],
+   "text": "Waqas apna joda le gaya aur baqi 700 de gaya",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_waqas",
+     "amount": 700
+    }
+   ],
+   "alt": [
+    [
+     {
+      "type": "payment",
+      "c": "c_waqas",
+      "amount": 700,
+      "full": true
+     }
+    ]
+   ]
+  },
+  {
+   "id": "wh01",
+   "cat": "wholesale",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "big_amount",
+    "quantity_words"
+   ],
+   "text": "Yasir Store ko 10 carton Tapal chai diye, 45,000 udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_yasir",
+     "amount": 45000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh02",
+   "cat": "wholesale",
+   "forms": [
+    "credit",
+    "new_person",
+    "roman_urdu",
+    "big_amount",
+    "spoken_amount"
+   ],
+   "text": "Madina General Store naya hai, 15 bori cheeni sawa lakh ka maal udhaar diya",
+   "expect": [
+    {
+     "type": "credit",
+     "new": [
+      "Madina General Store",
+      "Madina Store",
+      "Madina General",
+      "Madina"
+     ],
+     "amount": 125000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh03",
+   "cat": "wholesale",
+   "forms": [
+    "payment",
+    "roman_urdu",
+    "big_amount",
+    "spoken_amount"
+   ],
+   "text": "Bismillah Karyana ne dhai lakh jama karwa diye",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_bismillah",
+     "amount": 250000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh04",
+   "cat": "wholesale",
+   "forms": [
+    "purchase",
+    "roman_urdu",
+    "big_amount",
+    "quantity_words"
+   ],
+   "text": "Rehman Traders se 20 peti ghee aayi, 3 lakh 40 hazaar udhaar pe",
+   "expect": [
+    {
+     "type": "purchase",
+     "c": "c_rehman",
+     "amount": 340000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh05",
+   "cat": "wholesale",
+   "forms": [
+    "supplier_payment",
+    "roman_urdu",
+    "big_amount"
+   ],
+   "text": "Haji Sahab ko 1 lakh bank se bhej diye",
+   "expect": [
+    {
+     "type": "supplier_payment",
+     "c": "c_bashir",
+     "amount": 100000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh06",
+   "cat": "wholesale",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "text": "Khyber Mart 12 darjan sabun 18,000, Saeed Brothers 8 carton biscuit 24,000, aur Noor Muhammad ne 30 hazaar jama karwaye",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_khyber",
+     "amount": 18000
+    },
+    {
+     "type": "credit",
+     "c": "c_saeed",
+     "amount": 24000
+    },
+    {
+     "type": "payment",
+     "c": "c_noor",
+     "amount": 30000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh07",
+   "cat": "wholesale",
+   "forms": [
+    "balance",
+    "roman_urdu"
+   ],
+   "text": "Afridi General Store ki taraf kitna nikalta hai?",
+   "expect": [
+    {
+     "type": "balance",
+     "c": "c_afridi"
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh08",
+   "cat": "wholesale",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "big_amount",
+    "spoken_amount"
+   ],
+   "text": "یاسر سٹور کو پچاس کارٹن کولڈ ڈرنک ڈیڑھ لاکھ کی ادھار دیں",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_yasir",
+     "amount": 150000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh09",
+   "cat": "wholesale",
+   "forms": [
+    "list_total",
+    "roman_urdu"
+   ],
+   "text": "Charsadda Road walon ka total kitna udhaar hai?",
+   "expect": [
+    {
+     "type": "total_due",
+     "list": "l_charsadda"
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh10",
+   "cat": "wholesale",
+   "forms": [
+    "credit",
+    "code_mixed",
+    "promise_inside"
+   ],
+   "text": "Gulzar Khan ko 6 cartons cooking oil supply kiye, invoice 52,500, payment next week",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_gulzar",
+     "amount": 52500
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "wh11",
+   "cat": "wholesale",
+   "forms": [
+    "payment",
+    "roman_urdu",
+    "big_amount",
+    "spoken_amount"
+   ],
+   "text": "Saeed Brothers se paune do lakh wasool hue",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_saeed",
+     "amount": 175000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "mb01",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "roman_urdu"
+   ],
+   "text": "Umar ko 500 ka load kiya, udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "id": "mb02",
+   "cat": "mobile",
+   "forms": [
+    "payment",
+    "roman_urdu"
+   ],
+   "text": "Bilal ne load ke 1000 wapas kar diye",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_bilal",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "id": "mb03",
+   "cat": "mobile",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "text": "Asad 300 load, Zubair 500 load, Waqas dhai sau ka load, sab udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_asad",
+     "amount": 300
+    },
+    {
+     "type": "credit",
+     "c": "c_zubair",
+     "amount": 500
+    },
+    {
+     "type": "credit",
+     "c": "c_waqas",
+     "amount": 250
+    }
+   ]
+  },
+  {
+   "id": "mb04",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "spoken_amount"
+   ],
+   "text": "شاہد کا ساڑھے تین سو کا لوڈ لکھ دو",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_shahid",
+     "amount": 350
+    }
+   ]
+  },
+  {
+   "id": "mb05",
+   "cat": "mobile",
+   "forms": [
+    "balance",
+    "roman_urdu"
+   ],
+   "text": "Imran ka load ka kitna baqi hai?",
+   "expect": [
+    {
+     "type": "balance",
+     "c": "c_imran"
+    }
+   ]
+  },
+  {
+   "id": "mb06",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "english"
+   ],
+   "text": "Ali Raza took a 1000 rupee scratch card and 200 easyload on credit",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_ali",
+     "amount": 1200
+    }
+   ]
+  },
+  {
+   "id": "mb07",
+   "cat": "mobile",
+   "forms": [
+    "multi_entry",
+    "advance",
+    "roman_urdu"
+   ],
+   "text": "Tariq ka phone repair 2500 ka, 1000 advance de gaya",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_tariq",
+     "amount": 2500
+    },
+    {
+     "type": "payment",
+     "c": "c_tariq",
+     "amount": 1000
+    }
+   ],
+   "alt": [
+    [
+     {
+      "type": "credit",
+      "c": "c_tariq",
+      "amount": 1500
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mb08",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "phone_number_inside"
+   ],
+   "text": "Gul Khan ke number 0312 4567890 pe 500 ka load kiya, udhaar",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_gulkhan",
+     "amount": 500
+    }
+   ]
+  }
+ ],
+ "audio": [
+  {
+   "id": "a_ph01",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "اسد نے دو strip Panadol اور ایک کھانسی کا syrup لیا، چار سو اسی روپے ادھار",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_asad",
+     "amount": 480
+    }
+   ]
+  },
+  {
+   "id": "a_ph04",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "بلال کو دو injection لگائے، ساڑھے چار سو، ادھار پہ",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_bilal",
+     "amount": 450
+    }
+   ]
+  },
+  {
+   "id": "a_ph05",
+   "cat": "pharmacy",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "عمر تین پتے Brufen دو سو ستر، نوید ایک Augmentin syrup پانچ سو ساٹھ، اور زبیر نے ایک ہزار جمع کروائے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 270
+    },
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 560
+    },
+    {
+     "type": "payment",
+     "c": "c_zubair",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "id": "a_ph07",
+   "cat": "pharmacy",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "spoken_amount",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "وقاص نے بلڈ پریشر کی گولیوں کے دو پتے ساڑھے سات سو کے ادھار لیے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_waqas",
+     "amount": 750
+    }
+   ]
+  },
+  {
+   "id": "a_ph09",
+   "cat": "pharmacy",
+   "forms": [
+    "payment",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "voice": "en-IN-PrabhatNeural",
+   "tts": "Ahmed ne Easypaisa pe dedh hazaar bhej diye dawai ke",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_ahmed",
+     "amount": 1500
+    }
+   ]
+  },
+  {
+   "id": "a_da01",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "صائمہ باجی نے دو لیٹر دودھ اور آدھا کلو دہی لیا، پانچ سو ستر روپے کھاتے میں",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_saima",
+     "amount": 570
+    }
+   ]
+  },
+  {
+   "id": "a_da02",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "monthly"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "نسرین باجی کا اس مہینے کا دودھ چھیاسٹھ سو بنا، لکھ دو",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_nasreen",
+     "amount": 6600
+    }
+   ]
+  },
+  {
+   "id": "a_da06",
+   "cat": "dairy",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "بلال دو کلو دہی پانچ سو بیس، نوید تین لیٹر دودھ چھ سو ساٹھ، اور زبیر نے پانچ سو واپس کیے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_bilal",
+     "amount": 520
+    },
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 660
+    },
+    {
+     "type": "payment",
+     "c": "c_zubair",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "id": "a_da07",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "شاہد نے ڈیڑھ کلو دہی تین سو نوے کا لیا",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_shahid",
+     "amount": 390
+    }
+   ]
+  },
+  {
+   "id": "a_da10",
+   "cat": "dairy",
+   "forms": [
+    "credit",
+    "code_mixed",
+    "quantity_words"
+   ],
+   "voice": "en-IN-NeerjaNeural",
+   "tts": "Tariq took sawa litre milk and one packet butter, total 590, on credit",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_tariq",
+     "amount": 590
+    }
+   ]
+  },
+  {
+   "id": "a_hw01",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words",
+    "spoken_amount"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "حامد نے پانچ بوری سیمنٹ لی، سات ہزار پانچ سو، ادھار",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_hamid",
+     "amount": 7500
+    }
+   ]
+  },
+  {
+   "id": "a_hw02",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "جاوید کو بیس feet پائپ اور دو کلو کیل دی، چونتیس سو کھاتے میں لکھ دو",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_javed",
+     "amount": 3400
+    }
+   ]
+  },
+  {
+   "id": "a_hw05",
+   "cat": "hardware",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "حامد تین بوری سیمنٹ پینتالیس سو، جاوید ایک کلو کیل ساڑھے تین سو، اور طارق نے دو ہزار واپس کیے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_hamid",
+     "amount": 4500
+    },
+    {
+     "type": "credit",
+     "c": "c_javed",
+     "amount": 350
+    },
+    {
+     "type": "payment",
+     "c": "c_tariq",
+     "amount": 2000
+    }
+   ]
+  },
+  {
+   "id": "a_hw06",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "spoken_amount",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "علی رضا نے رنگ کے دو ڈبے ساڑھے پانچ ہزار کے ادھار لیے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_ali",
+     "amount": 5500
+    }
+   ]
+  },
+  {
+   "id": "a_hw09",
+   "cat": "hardware",
+   "forms": [
+    "credit",
+    "code_mixed",
+    "quantity_words"
+   ],
+   "voice": "en-IN-PrabhatNeural",
+   "tts": "Naveed bought fifty feet wire and four switches for 1850 on credit",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 1850
+    }
+   ]
+  },
+  {
+   "id": "a_tl01",
+   "cat": "tailor",
+   "forms": [
+    "credit",
+    "roman_urdu"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "شاہد کا قمیض شلوار سلائی پندرہ سو، ادھار لکھ دو",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_shahid",
+     "amount": 1500
+    }
+   ]
+  },
+  {
+   "id": "a_tl02",
+   "cat": "tailor",
+   "forms": [
+    "multi_entry",
+    "advance",
+    "roman_urdu"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "عمر کے دو سوٹ سلائی کے لیے دیے، چھتیس سو بنے، دو ہزار advance دے گیا",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 3600
+    },
+    {
+     "type": "payment",
+     "c": "c_umar",
+     "amount": 2000
+    }
+   ],
+   "alt": [
+    [
+     {
+      "type": "credit",
+      "c": "c_umar",
+      "amount": 1600
+     }
+    ]
+   ]
+  },
+  {
+   "id": "a_tl04",
+   "cat": "tailor",
+   "forms": [
+    "multi_entry",
+    "roman_urdu"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "نوید کے دو سوٹ بتیس سو، اسد کا ایک جوڑا سولہ سو، دونوں نے ابھی کچھ نہیں دیا",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_naveed",
+     "amount": 3200
+    },
+    {
+     "type": "credit",
+     "c": "c_asad",
+     "amount": 1600
+    }
+   ]
+  },
+  {
+   "id": "a_tl07",
+   "cat": "tailor",
+   "forms": [
+    "credit",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "زبیر کی شیروانی کی سلائی ساڑھے چھ ہزار، کھاتے میں لکھ دو",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_zubair",
+     "amount": 6500
+    }
+   ]
+  },
+  {
+   "id": "a_tl08",
+   "cat": "tailor",
+   "forms": [
+    "multi_entry",
+    "advance",
+    "code_mixed"
+   ],
+   "voice": "en-IN-NeerjaNeural",
+   "tts": "Ali Raza ka waistcoat order 2200, he paid 1000 advance",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_ali",
+     "amount": 2200
+    },
+    {
+     "type": "payment",
+     "c": "c_ali",
+     "amount": 1000
+    }
+   ],
+   "alt": [
+    [
+     {
+      "type": "credit",
+      "c": "c_ali",
+      "amount": 1200
+     }
+    ]
+   ]
+  },
+  {
+   "id": "a_wh02",
+   "cat": "wholesale",
+   "forms": [
+    "credit",
+    "new_person",
+    "roman_urdu",
+    "big_amount",
+    "spoken_amount"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "مدینہ جنرل سٹور نیا ہے، پندرہ بوری چینی سوا لاکھ کا مال ادھار دیا",
+   "expect": [
+    {
+     "type": "credit",
+     "new": [
+      "Madina General Store",
+      "Madina Store",
+      "Madina General",
+      "Madina"
+     ],
+     "amount": 125000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "a_wh04",
+   "cat": "wholesale",
+   "forms": [
+    "purchase",
+    "roman_urdu",
+    "big_amount",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "رحمان ٹریڈرز سے بیس پیٹی گھی آئی، تین لاکھ چالیس ہزار ادھار پہ",
+   "expect": [
+    {
+     "type": "purchase",
+     "c": "c_rehman",
+     "amount": 340000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "a_wh06",
+   "cat": "wholesale",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "quantity_words"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "خیبر مارٹ بارہ درجن صابن اٹھارہ ہزار، سعید برادرز آٹھ carton biscuit چوبیس ہزار، اور نور محمد نے تیس ہزار جمع کروائے",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_khyber",
+     "amount": 18000
+    },
+    {
+     "type": "credit",
+     "c": "c_saeed",
+     "amount": 24000
+    },
+    {
+     "type": "payment",
+     "c": "c_noor",
+     "amount": 30000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "a_wh10",
+   "cat": "wholesale",
+   "forms": [
+    "credit",
+    "code_mixed",
+    "promise_inside"
+   ],
+   "voice": "en-IN-PrabhatNeural",
+   "tts": "Gulzar Khan ko 6 cartons cooking oil supply kiye, invoice 52500, payment next week",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_gulzar",
+     "amount": 52500
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "a_wh11",
+   "cat": "wholesale",
+   "forms": [
+    "payment",
+    "roman_urdu",
+    "big_amount",
+    "spoken_amount"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "سعید برادرز سے پونے دو لاکھ وصول ہوئے",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_saeed",
+     "amount": 175000
+    }
+   ],
+   "roster": "wholesaler"
+  },
+  {
+   "id": "a_mb01",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "roman_urdu"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "عمر کو پانچ سو کا load کیا، ادھار",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_umar",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "id": "a_mb02",
+   "cat": "mobile",
+   "forms": [
+    "payment",
+    "roman_urdu"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "بلال نے load کے ایک ہزار واپس کر دیے",
+   "expect": [
+    {
+     "type": "payment",
+     "c": "c_bilal",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "id": "a_mb03",
+   "cat": "mobile",
+   "forms": [
+    "multi_entry",
+    "roman_urdu",
+    "spoken_amount"
+   ],
+   "voice": "ur-PK-AsadNeural",
+   "tts": "اسد تین سو load، زبیر پانچ سو load، وقاص ڈھائی سو کا load، سب ادھار",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_asad",
+     "amount": 300
+    },
+    {
+     "type": "credit",
+     "c": "c_zubair",
+     "amount": 500
+    },
+    {
+     "type": "credit",
+     "c": "c_waqas",
+     "amount": 250
+    }
+   ]
+  },
+  {
+   "id": "a_mb04",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "urdu_script",
+    "spoken_amount"
+   ],
+   "voice": "ur-PK-UzmaNeural",
+   "tts": "شاہد کا ساڑھے تین سو کا لوڈ لکھ دو",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_shahid",
+     "amount": 350
+    }
+   ]
+  },
+  {
+   "id": "a_mb06",
+   "cat": "mobile",
+   "forms": [
+    "credit",
+    "english"
+   ],
+   "voice": "en-IN-NeerjaNeural",
+   "tts": "Ali Raza took a one thousand rupee scratch card and two hundred easyload on credit",
+   "expect": [
+    {
+     "type": "credit",
+     "c": "c_ali",
+     "amount": 1200
+    }
+   ]
+  }
+ ]
+}

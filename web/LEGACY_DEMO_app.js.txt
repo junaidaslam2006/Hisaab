@@ -1,0 +1,1192 @@
+// Hisaab dashboard — live khata, WhatsApp mirror, push-to-talk mic and Gemini Live call.
+
+const $ = (s, el = document) => el.querySelector(s)
+const $$ = (s, el = document) => [...el.querySelectorAll(s)]
+const esc = s => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]))
+const fmt = n => `Rs ${Math.abs(Math.round(n)).toLocaleString('en-PK')}`
+const icon = (id, cls = 'ic') => `<svg class="${cls}"><use href="#i-${id}"/></svg>`
+
+const pref = {
+  get(key, fallback) {
+    try {
+      const v = localStorage.getItem(`hisaab-${key}`)
+      return v === null ? fallback : JSON.parse(v)
+    } catch {
+      return fallback
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(`hisaab-${key}`, JSON.stringify(value))
+    } catch {}
+  },
+}
+
+const S = {
+  summary: null,
+  feed: new Map(),
+  wa: null,
+  ai: null,
+  baseUrl: '',
+  sort: pref.get('sort', 'recent'),
+  autoplay: pref.get('autoplay', true),
+  played: new Set(),
+  qrDismissed: false,
+}
+
+// ---------------------------------------------------------------- utils
+
+function ago(ts) {
+  const s = Math.max(0, (Date.now() - ts) / 1000)
+  if (s < 45) return 'just now'
+  if (s < 3600) return `${Math.round(s / 60)} min ago`
+  if (s < 86400) return `${Math.round(s / 3600)} hr ago`
+  if (s < 172800) return 'yesterday'
+  return `${Math.round(s / 86400)} days ago`
+}
+
+function clock(ts) {
+  return new Date(ts).toLocaleTimeString('en-PK', { hour: 'numeric', minute: '2-digit' })
+}
+
+function mmss(sec) {
+  const s = Math.max(0, Math.round(sec || 0))
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
+
+function hash(str) {
+  let h = 2166136261
+  for (const ch of String(str)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619)
+  return h >>> 0
+}
+
+const AVATAR = ['#0e7a5c', '#c2410c', '#2459d6', '#7c3aed', '#b45309', '#0f766e', '#be185d', '#4d7c0f']
+const avatarColor = name => AVATAR[hash(name) % AVATAR.length]
+const initials = name => String(name).split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?'
+
+function tween(el, to, { dur = 900, format = fmt } = {}) {
+  const from = el._val ?? to
+  el._val = to
+  cancelAnimationFrame(el._raf)
+  if (from === to || document.hidden) {
+    el.textContent = format(to)
+    return
+  }
+  const t0 = performance.now()
+  const step = now => {
+    const p = Math.min(1, (now - t0) / dur)
+    const e = 1 - Math.pow(1 - p, 3)
+    el.textContent = format(from + (to - from) * e)
+    if (p < 1) el._raf = requestAnimationFrame(step)
+  }
+  el._raf = requestAnimationFrame(step)
+}
+
+function toast(html, kind = '') {
+  const t = document.createElement('div')
+  t.className = `toast ${kind}`
+  t.innerHTML = html
+  $('#toasts').appendChild(t)
+  setTimeout(() => {
+    t.style.transition = 'opacity .3s, transform .3s'
+    t.style.opacity = '0'
+    t.style.transform = 'translateY(8px)'
+    setTimeout(() => t.remove(), 320)
+  }, kind === 'bad' ? 6000 : 3800)
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(path, options)
+  if (!res.ok) throw new Error((await res.text()) || res.statusText)
+  return res.json()
+}
+
+function waFormat(text) {
+  return esc(text)
+    .replace(/```([\s\S]*?)```/g, (_, code) => `<code>${code}</code>`)
+    .replace(/\*([^*\n]+)\*/g, '<b>$1</b>')
+    .replace(/(^|[\s(])_([^_\n]+)_(?=[\s).,!?]|$)/g, '$1<i>$2</i>')
+    .replace(/~([^~\n]+)~/g, '<s>$1</s>')
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+}
+
+// ---------------------------------------------------------------- live data (SSE)
+
+function connect() {
+  const es = new EventSource('/events')
+  es.addEventListener('snapshot', e => {
+    const d = JSON.parse(e.data)
+    const prev = S.summary
+    S.summary = d.summary
+    S.wa = d.wa
+    S.ai = d.ai
+    S.baseUrl = d.baseUrl
+    S.feed = new Map(d.feed.map(f => [f.id, f]))
+    for (const f of d.feed) if (f.stage === 'done' || f.stage === 'error') S.played.add(f.id)
+    renderShop()
+    renderKpis(prev)
+    renderLedger(prev)
+    renderFeed(true)
+    renderWa()
+    renderAi()
+  })
+  es.addEventListener('state', e => {
+    const prev = S.summary
+    S.summary = JSON.parse(e.data)
+    renderKpis(prev)
+    renderLedger(prev)
+  })
+  es.addEventListener('feed', e => upsertFeed(JSON.parse(e.data)))
+  es.addEventListener('wa', e => {
+    S.wa = JSON.parse(e.data)
+    renderWa()
+  })
+  es.addEventListener('ai', e => {
+    S.ai = JSON.parse(e.data)
+    renderAi()
+  })
+}
+
+// ---------------------------------------------------------------- header
+
+function renderShop() {
+  $('#shopName').textContent = S.summary.shop.name
+  $('#shopArea').textContent = S.summary.shop.area
+}
+
+function maskPhone(p = '') {
+  if (p.length < 8) return `+${p}`
+  return `+${p.slice(0, 2)} ${p.slice(2, 5)} ••• ${p.slice(-4)}`
+}
+
+function renderWa() {
+  const pill = $('#waPill')
+  const w = S.wa || { state: 'starting' }
+  pill.className = 'pill'
+  let text = 'WhatsApp'
+  if (w.state === 'open') {
+    pill.classList.add('ok')
+    text = w.me?.phone ? maskPhone(w.me.phone) : 'Connected'
+  } else if (w.state === 'qr') {
+    pill.classList.add('warn')
+    text = 'Scan QR'
+  } else if (w.state === 'logged_out') {
+    pill.classList.add('bad')
+    text = 'Logged out'
+  } else if (w.state === 'disabled') {
+    text = 'WhatsApp off'
+  } else {
+    pill.classList.add('busy')
+    text = 'Connecting'
+  }
+  $('#waText').textContent = text
+
+  const modal = $('#qrModal')
+  if (w.state === 'qr' && w.qr) {
+    $('#qrBox').innerHTML = `<img src="${w.qr}" alt="WhatsApp QR code">`
+    $('#qrState').textContent = 'QR refreshes automatically every ~20 seconds.'
+    if (!S.qrDismissed) modal.hidden = false
+  } else if (w.state === 'open') {
+    if (!modal.hidden) {
+      $('#qrBox').innerHTML = `<div class="ok">${icon('check')}Linked</div>`
+      $('#qrState').textContent = `Connected as ${maskPhone(w.me?.phone)}`
+      setTimeout(() => (modal.hidden = true), 1600)
+    }
+  } else {
+    $('#qrBox').innerHTML = '<div class="spinner"></div>'
+    $('#qrState').textContent = w.state === 'disabled' ? 'WhatsApp is turned off (WA_ENABLED=false).' : 'Connecting to WhatsApp…'
+  }
+}
+
+function renderAi() {
+  const pill = $('#aiPill')
+  const a = S.ai
+  pill.className = 'pill'
+  if (!a || a.reason === 'checking') {
+    pill.classList.add('busy')
+    $('#aiText').textContent = 'Gemini'
+  } else if (a.ok) {
+    pill.classList.add(a.missing?.length ? 'warn' : 'ok')
+    $('#aiText').textContent = 'Gemini ready'
+    pill.title = `Available: ${a.available.join(', ')}${a.missing?.length ? `\nNot found: ${a.missing.join(', ')}` : ''}`
+  } else {
+    pill.classList.add('bad')
+    $('#aiText').textContent = /missing/i.test(a.reason) ? 'Add API key' : 'Gemini error'
+    pill.title = a.reason
+  }
+}
+
+// ---------------------------------------------------------------- KPIs + chart
+
+function renderKpis(prev) {
+  const t = S.summary.totals
+  const bump = (id, changed) => {
+    const card = $(id).closest('.kpi')
+    if (!changed) return
+    card.classList.remove('bump')
+    void card.offsetWidth
+    card.classList.add('bump')
+  }
+  tween($('#kDue'), t.due, { dur: 1100 })
+  tween($('#kGiven'), t.givenToday)
+  tween($('#kCollected'), t.collectedToday)
+  if (prev) {
+    bump('#kDue', prev.totals.due !== t.due)
+    bump('#kGiven', prev.totals.givenToday !== t.givenToday)
+    bump('#kCollected', prev.totals.collectedToday !== t.collectedToday)
+  }
+  $('#kDueFoot').textContent = `${t.customersWithDue} customers ke zimme · ${t.customers} khate`
+  $('#kGivenFoot').textContent = `${t.entriesToday} ${t.entriesToday === 1 ? 'entry' : 'entries'} aaj`
+  $('#kCollectedFoot').textContent = t.collectedToday ? 'Wapsi + Raast payments' : 'Abhi tak koi wapsi nahi'
+  renderChart()
+}
+
+function renderChart() {
+  const week = S.summary.week
+  const max = Math.max(1, ...week.flatMap(d => [d.given, d.collected]))
+  const today = week[week.length - 1].day
+  $('#chart').innerHTML = week.map(d => {
+    const label = d.day === today ? 'Aaj' : new Date(`${d.day}T12:00:00`).toLocaleDateString('en-US', { weekday: 'short' })
+    const g = Math.round((d.given / max) * 64)
+    const c = Math.round((d.collected / max) * 64)
+    return `<div class="day${d.day === today ? ' today' : ''}" title="${label}: diya ${fmt(d.given)}, wasool ${fmt(d.collected)}">
+      <div class="bars"><span class="bar g" style="height:${Math.max(2, g)}px"></span><span class="bar c" style="height:${Math.max(2, c)}px"></span></div>
+      <span class="lbl">${label}</span></div>`
+  }).join('')
+}
+
+// ---------------------------------------------------------------- ledger
+
+const rows = new Map()
+
+function sortedCustomers() {
+  const list = S.summary.customers.slice()
+  if (S.sort === 'due') list.sort((a, b) => b.balance - a.balance || b.lastTs - a.lastTs)
+  else list.sort((a, b) => b.lastTs - a.lastTs)
+  return list
+}
+
+function lastHtml(c) {
+  if (!c.lastEntry) return '<span>Naya khata</span>'
+  const e = c.lastEntry
+  const sign = e.kind === 'credit' ? '+' : '−'
+  const via = e.source === 'raast' ? ' · Raast' : e.source === 'live' ? ' · call' : ''
+  return `<b class="${e.kind}">${sign}${fmt(e.amount)}</b> · ${ago(c.lastTs)}${via}${e.items?.length ? `<span class="items">${esc(e.items.join(', '))}</span>` : ''}`
+}
+
+function balClass(b) {
+  return b > 0 ? 'due' : b === 0 ? 'zero' : 'adv'
+}
+
+function balLabel(b) {
+  return b > 0 ? 'baqaya' : b === 0 ? 'saaf ✓' : 'advance'
+}
+
+function buildRow(c) {
+  const el = document.createElement('div')
+  el.className = 'row'
+  el.dataset.id = c.id
+  el.setAttribute('role', 'listitem')
+  el.innerHTML = `
+    <div class="who">
+      <div class="avatar" style="background:${avatarColor(c.name)}">${esc(initials(c.name))}</div>
+      <div class="names"><div class="name"></div><span class="urdu name-ur"></span></div>
+    </div>
+    <div class="last"></div>
+    <div class="bal"><div class="bal-v"></div><div class="bal-t"></div></div>`
+  el.addEventListener('click', () => openCustomer(c.id))
+  el.addEventListener('animationend', e => {
+    if (e.target === el && e.animationName !== 'rowIn') el.classList.remove('flash', 'payment', 'enter')
+  })
+  return el
+}
+
+function renderLedger(prev) {
+  const container = $('#ledger')
+  $('.empty-ledger', container)?.remove()
+  const list = sortedCustomers()
+  const prevMap = new Map((prev?.customers || []).map(c => [c.id, c]))
+  const first = new Map()
+  for (const [id, el] of rows) first.set(id, el.getBoundingClientRect().top)
+
+  const ids = new Set(list.map(c => c.id))
+  for (const [id, el] of rows) {
+    if (!ids.has(id)) {
+      el.remove()
+      rows.delete(id)
+    }
+  }
+
+  list.forEach((c, index) => {
+    let el = rows.get(c.id)
+    const isNew = !el
+    if (isNew) {
+      el = buildRow(c)
+      rows.set(c.id, el)
+    }
+    $('.name', el).textContent = c.name
+    $('.name-ur', el).textContent = c.nameUrdu || ''
+    $('.last', el).innerHTML = lastHtml(c)
+    const balEl = $('.bal-v', el)
+    balEl.className = `bal-v ${balClass(c.balance)}`
+    tween(balEl, c.balance, { dur: 1000 })
+    $('.bal-t', el).textContent = balLabel(c.balance)
+    el.classList.toggle('has-due', c.balance > 0)
+    // Move only rows that changed position, so untouched rows don't restart their animations.
+    if (container.children[index] !== el) container.insertBefore(el, container.children[index] || null)
+
+    const before = prevMap.get(c.id)
+    if (prev && (isNew || (before && (before.balance !== c.balance || before.lastTs !== c.lastTs)))) {
+      el.classList.remove('flash', 'payment', 'enter')
+      void el.offsetWidth
+      const paid = before ? c.balance < before.balance : false
+      el.classList.add('flash')
+      if (paid) el.classList.add('payment')
+      if (isNew) el.classList.add('enter')
+    }
+  })
+
+  for (const [id, el] of rows) {
+    const top = first.get(id)
+    if (top == null) continue
+    const dy = top - el.getBoundingClientRect().top
+    if (Math.abs(dy) > 1) {
+      el.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 560, easing: 'cubic-bezier(.2,.9,.3,1)' })
+    }
+  }
+
+  const t = S.summary.totals
+  $('#ledgerSub').textContent = `${t.customers} customers · tap a row for the full hisaab`
+  if (!list.length) container.innerHTML = '<div class="empty-ledger">Abhi koi khata nahi. Bol kar pehli entry likhwaein.</div>'
+}
+
+$$('.seg button').forEach(b => {
+  b.classList.toggle('on', b.dataset.sort === S.sort)
+  b.addEventListener('click', () => {
+    S.sort = b.dataset.sort
+    pref.set('sort', S.sort)
+    $$('.seg button').forEach(x => x.classList.toggle('on', x === b))
+    renderLedger(S.summary)
+  })
+})
+
+setInterval(() => {
+  if (!S.summary) return
+  for (const c of S.summary.customers) {
+    const el = rows.get(c.id)
+    if (el) $('.last', el).innerHTML = lastHtml(c)
+  }
+}, 30000)
+
+// ---------------------------------------------------------------- voice note player
+
+let currentVn = null
+const peaksCache = new Map()
+let decodeCtx = null
+
+async function peaksFor(url, n) {
+  if (peaksCache.has(url)) return peaksCache.get(url)
+  const p = (async () => {
+    decodeCtx ??= new (window.AudioContext || window.webkitAudioContext)()
+    const buf = await (await fetch(url)).arrayBuffer()
+    const audio = await decodeCtx.decodeAudioData(buf)
+    const data = audio.getChannelData(0)
+    const size = Math.floor(data.length / n)
+    const out = []
+    for (let i = 0; i < n; i++) {
+      let sum = 0
+      for (let j = 0; j < size; j++) sum += data[i * size + j] ** 2
+      out.push(Math.sqrt(sum / size))
+    }
+    const max = Math.max(...out, 0.0001)
+    return out.map(v => v / max)
+  })()
+  peaksCache.set(url, p)
+  return p
+}
+
+function voiceNote({ url, seconds, variant = 'in', label = '' }) {
+  const N = 42
+  const wrap = document.createElement('div')
+  const seed = hash(url)
+  const bars = Array.from({ length: N }, (_, i) => {
+    const h = 0.25 + (((seed >> (i % 24)) & 7) / 7) * 0.6 * Math.abs(Math.sin(i * 0.7 + seed))
+    return `<span style="height:${Math.round(Math.max(0.15, h) * 100)}%"></span>`
+  }).join('')
+  wrap.innerHTML = `
+    <div class="vn ${variant}">
+      <button class="vn-btn" type="button" aria-label="Play voice note">${icon('play')}</button>
+      <div class="vn-wave">${bars}</div>
+      <span class="vn-time">${mmss(seconds)}</span>
+    </div>${label ? `<div class="vn-by">${label}</div>` : ''}`
+  const vn = $('.vn', wrap)
+  const btn = $('.vn-btn', wrap)
+  const spans = $$('.vn-wave span', wrap)
+  const time = $('.vn-time', wrap)
+  const audio = new Audio()
+  audio.preload = 'none'
+  audio.src = url
+
+  const setIcon = playing => (btn.innerHTML = icon(playing ? 'pause' : 'play'))
+  const paint = p => {
+    const k = Math.round(p * N)
+    spans.forEach((s, i) => s.classList.toggle('on', i < k))
+  }
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) paint(audio.currentTime / audio.duration)
+    time.textContent = mmss(audio.currentTime || seconds)
+  })
+  audio.addEventListener('play', () => {
+    vn.classList.add('playing')
+    setIcon(true)
+  })
+  audio.addEventListener('pause', () => {
+    vn.classList.remove('playing')
+    setIcon(false)
+  })
+  audio.addEventListener('ended', () => {
+    paint(0)
+    time.textContent = mmss(seconds)
+  })
+
+  vn.play = () => {
+    if (currentVn && currentVn !== vn) currentVn.stop()
+    currentVn = vn
+    return audio.play()
+  }
+  vn.stop = () => audio.pause()
+  btn.addEventListener('click', () => (audio.paused ? vn.play().catch(() => {}) : audio.pause()))
+  $('.vn-wave', wrap).addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const p = (e.clientX - r.left) / r.width
+    const go = () => {
+      if (audio.duration) audio.currentTime = p * audio.duration
+    }
+    if (audio.readyState >= 1) go()
+    else audio.addEventListener('loadedmetadata', go, { once: true })
+    if (audio.paused) vn.play().catch(() => {})
+  })
+
+  peaksFor(url, N).then(peaks => peaks.forEach((v, i) => (spans[i].style.height = `${Math.round(Math.max(0.12, v) * 100)}%`))).catch(() => {})
+  return wrap
+}
+
+// ---------------------------------------------------------------- live feed
+
+const SOURCE = {
+  whatsapp: { label: 'WhatsApp', icon: 'chat' },
+  dashboard: { label: 'Dashboard', icon: 'monitor' },
+  live: { label: 'Live call', icon: 'phone' },
+  raast: { label: 'Raast payment', icon: 'wallet' },
+}
+
+const LANG = { urdu: 'Urdu', pashto: 'Pashto', punjabi: 'Punjabi', hindko: 'Hindko', english: 'English', mixed: 'Mixed' }
+
+function emptyFeed() {
+  const examples = ['Umar ne 500 ka sauda liya', 'Ahmed ne 1000 ka atta aur cheeni li', 'Umar ne 300 wapis de diye', 'Kis kis ka udhaar 1000 se zyada hai?']
+  return `<div class="feed-empty">
+    <div class="urdu">بولو، اور کھاتہ لکھ جائے</div>
+    <div class="big">Send a WhatsApp voice note, or hold the mic</div>
+    <p>Urdu, Pashto, Punjabi or a mix. Hisaab writes the khata and replies with a voice note.</p>
+    <div class="examples">${examples.map(x => `<button class="example" type="button">${esc(x)}</button>`).join('')}</div>
+  </div>`
+}
+
+function renderFeed(scroll) {
+  const el = $('#feed')
+  const items = [...S.feed.values()].sort((a, b) => a.ts - b.ts)
+  el.innerHTML = ''
+  if (!items.length) {
+    el.innerHTML = emptyFeed()
+    $$('.example', el).forEach(b => b.addEventListener('click', () => sendText(b.textContent)))
+    return
+  }
+  for (const item of items) el.appendChild(buildMsg(item))
+  if (scroll) el.scrollTop = el.scrollHeight
+}
+
+function upsertFeed(item) {
+  const isNew = !S.feed.has(item.id)
+  S.feed.set(item.id, item)
+  const feedEl = $('#feed')
+  if (isNew) {
+    $('.feed-empty', feedEl)?.remove()
+    feedEl.appendChild(buildMsg(item))
+  } else {
+    const el = feedEl.querySelector(`[data-msg="${item.id}"]`)
+    if (el) updateMsg(el, item)
+    else feedEl.appendChild(buildMsg(item))
+  }
+  feedEl.scrollTop = feedEl.scrollHeight
+
+  if ((item.stage === 'done' || item.stage === 'error') && !S.played.has(item.id)) {
+    S.played.add(item.id)
+    if (item.reply?.voice && S.autoplay) {
+      const vn = feedEl.querySelector(`[data-msg="${item.id}"] .vn.out`)
+      vn?.play().catch(() => {
+        toast(`${icon('vol')} Click anywhere once to allow sound`)
+        // Play the blocked reply on the next click, unless that click starts the mic/call or plays another note.
+        document.addEventListener('pointerdown', e => {
+          if (e.target.closest('#micBtn, #callBtn, .vn-btn, .vn-wave')) return
+          if (currentVn && currentVn !== vn && currentVn.classList.contains('playing')) return
+          vn.play().catch(() => {})
+        }, { once: true })
+      })
+    }
+  }
+}
+
+function buildMsg(item) {
+  const el = document.createElement('div')
+  el.className = 'msg'
+  el.dataset.msg = item.id
+  const src = SOURCE[item.source] || SOURCE.dashboard
+  const who = item.source === 'whatsapp' && item.from ? ` · ${esc(item.from)}` : item.source === 'dashboard' ? (item.input?.kind === 'voice' ? ' · mic' : item.input?.kind === 'photo' ? ' · photo' : ' · typed') : ''
+  el.innerHTML = `
+    <div class="msg-meta"><span class="src ${item.source}">${icon(src.icon)}${src.label}</span><span>${who.replace(/^ · /, '')}</span><span>· ${clock(item.ts)}</span></div>
+    <div class="bubble in"></div>
+    <div class="ai-zone"></div>
+    <div class="out-zone"></div>`
+  const inB = $('.bubble.in', el)
+  const kind = item.input?.kind
+  if (kind === 'voice' && item.input.audioUrl) {
+    inB.appendChild(voiceNote({ url: item.input.audioUrl, seconds: item.input.seconds, variant: 'in' }))
+  } else if (kind === 'photo' && item.input.imageUrl) {
+    inB.innerHTML = `<img class="photo" src="${item.input.imageUrl}" alt="Khata photo">`
+  } else {
+    inB.classList.add('text-only')
+    inB.innerHTML = esc(item.input?.text || '')
+  }
+  inB.insertAdjacentHTML('beforeend', '<div class="transcript" hidden></div>')
+  updateMsg(el, item)
+  return el
+}
+
+function stepsHtml(stage) {
+  const order = ['thinking', 'speaking', 'done']
+  const idx = order.indexOf(stage)
+  const step = (label, i, ic) => {
+    const cls = idx > i ? 'done' : idx === i ? 'now' : ''
+    return `<span class="step ${cls}">${idx > i ? icon('check') : ic ? icon(ic) : ''}${label}</span>`
+  }
+  return `<div class="steps">
+    <span class="step done">${icon('check')}Suna</span>
+    ${step(idx > 0 ? 'Samajh liya' : 'Samajh raha hai', 0)}
+    ${step(idx > 0 ? 'Khate mein likh diya' : 'Likhna', 0)}
+    ${step(idx > 1 ? 'Jawab bhej diya' : idx === 1 ? 'Awaaz bana raha hai' : 'Jawab', 1)}
+  </div>`
+}
+
+function updateMsg(el, item) {
+  const u = item.understood
+  const tr = $('.transcript', el)
+  if (tr && u && (u.transcriptUrdu || u.transcriptRoman) && item.input?.kind === 'voice') {
+    tr.hidden = false
+    tr.innerHTML = `${u.transcriptUrdu ? `<span class="urdu">${esc(u.transcriptUrdu)}</span>` : ''}
+      <div class="roman">${esc(u.transcriptRoman || '')}${u.language ? `<span class="lang">${LANG[u.language] || u.language}</span>` : ''}</div>`
+  }
+
+  const ai = $('.ai-zone', el)
+  const aiKey = `${item.stage}|${(u?.chips || []).length}`
+  if (ai.dataset.key !== aiKey) {
+    ai.dataset.key = aiKey
+    if (item.stage === 'error') {
+      const e = item.error || ''
+      const why = /quota|429|RESOURCE_EXHAUSTED/i.test(e) ? 'Gemini free-tier limit hit — wait a minute'
+        : /denied|PERMISSION|API key|403|401|UNAUTHENTICATED/i.test(e) ? 'Gemini API key problem — check hisaab/.env'
+        : /timeout|abort|fetch failed|ENOTFOUND|ECONN/i.test(e) ? 'Internet / Gemini timeout — try again'
+        : 'AI could not read that message'
+      ai.innerHTML = `<div class="steps"><span class="step err">${icon('x')}Samajh nahi aaya</span></div><div class="err-text" title="${esc(e)}">${why}</div>`
+    } else if (item.stage === 'done' && u?.chips) {
+      const timing = u.model ? `<span class="model-tag">${esc(u.model)}${u.ms ? ` · ${(u.ms / 1000).toFixed(1)}s` : ''}</span>` : ''
+      ai.innerHTML = `<div class="chips">${u.chips.map((c, i) => `<span class="chip ${c.kind}" style="animation-delay:${i * 90}ms"><i></i>${esc(c.label)}</span>`).join('')}${timing}</div>`
+    } else if (item.stage === 'speaking' && u?.chips?.length) {
+      ai.innerHTML = `${stepsHtml(item.stage)}<div class="chips" style="margin-top:8px">${u.chips.map((c, i) => `<span class="chip ${c.kind}" style="animation-delay:${i * 90}ms"><i></i>${esc(c.label)}</span>`).join('')}</div>`
+    } else if (item.stage !== 'done') {
+      ai.innerHTML = stepsHtml(item.stage)
+    } else {
+      ai.innerHTML = ''
+    }
+  }
+
+  const out = $('.out-zone', el)
+  const r = item.reply
+  const outKey = r ? `${r.voice?.url || ''}|${r.text?.length || 0}|${item.stage}` : ''
+  if (out.dataset.key !== outKey) {
+    out.dataset.key = outKey
+    out.innerHTML = ''
+    if (r && (r.voice || item.stage === 'done' || item.stage === 'error')) {
+      const b = document.createElement('div')
+      b.className = 'bubble out'
+      if (r.voice) {
+        b.appendChild(voiceNote({ url: r.voice.url, seconds: r.voice.seconds, variant: 'out', label: `${icon('spark')} Hisaab ki awaaz · ${esc(r.voice.provider)}` }))
+      }
+      if (r.spoken) b.insertAdjacentHTML('beforeend', `<div class="reply-spoken">${esc(r.spoken)}</div>`)
+      if (r.text) b.insertAdjacentHTML('beforeend', `<div class="reply-text">${waFormat(r.text)}</div>`)
+      out.appendChild(b)
+      out.style.display = 'flex'
+      out.style.flexDirection = 'column'
+    }
+  }
+}
+
+// ---------------------------------------------------------------- text + photo
+
+async function sendText(text) {
+  const t = String(text || '').trim()
+  if (!t) return
+  try {
+    await api('/api/text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: t }) })
+  } catch (err) {
+    toast(`Could not send: ${esc(err.message)}`, 'bad')
+  }
+}
+
+const composer = $('#composer')
+$('#typeBtn').addEventListener('click', () => {
+  composer.hidden = !composer.hidden
+  $('#typeBtn').classList.toggle('on', !composer.hidden)
+  if (!composer.hidden) $('#textInput').focus()
+})
+$('#sendBtn').addEventListener('click', () => {
+  sendText($('#textInput').value)
+  $('#textInput').value = ''
+})
+$('#textInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    sendText(e.target.value)
+    e.target.value = ''
+  }
+  if (e.key === 'Escape') $('#typeBtn').click()
+})
+$('#photoInput').addEventListener('change', async e => {
+  const file = e.target.files?.[0]
+  e.target.value = ''
+  if (!file) return
+  try {
+    await api('/api/photo', { method: 'POST', headers: { 'Content-Type': file.type || 'image/jpeg' }, body: file })
+    toast('Khata photo bhej di — parh raha hai…')
+  } catch (err) {
+    toast(`Photo failed: ${esc(err.message)}`, 'bad')
+  }
+})
+
+// ---------------------------------------------------------------- push-to-talk mic
+
+const mic = $('#micBtn')
+const micLabel = $('#micLabel')
+let rec = null
+let starting = false
+let tapMode = false
+let pendingStop = false
+let downAt = 0
+
+function setMicLabel(main, sub, recording = false) {
+  micLabel.innerHTML = `<b>${main}</b><span class="${sub.match(/[؀-ۿ]/) ? 'urdu' : ''}">${sub}</span>`
+  micLabel.classList.toggle('rec', recording)
+}
+
+async function startRecording() {
+  if (rec || starting) return
+  starting = true
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } })
+    const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'].find(m => window.MediaRecorder?.isTypeSupported(m)) || ''
+    const mr = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined)
+    const chunks = []
+    mr.ondataavailable = e => e.data.size && chunks.push(e.data)
+    const ctx = new AudioContext()
+    const an = ctx.createAnalyser()
+    an.fftSize = 512
+    ctx.createMediaStreamSource(stream).connect(an)
+    rec = { mr, chunks, stream, ctx, an, t0: performance.now(), raf: 0 }
+    mr.start(250)
+    mic.classList.add('rec')
+    const data = new Uint8Array(an.fftSize)
+    const loop = () => {
+      if (!rec) return
+      an.getByteTimeDomainData(data)
+      let sum = 0
+      for (const v of data) sum += ((v - 128) / 128) ** 2
+      const lvl = Math.min(1, Math.sqrt(sum / data.length) * 4)
+      mic.style.setProperty('--lvl', lvl.toFixed(3))
+      const secs = (performance.now() - rec.t0) / 1000
+      setMicLabel(`Sun raha hoon… ${mmss(secs)}`, tapMode ? 'Tap again to send' : 'Release to send', true)
+      rec.raf = requestAnimationFrame(loop)
+    }
+    loop()
+  } catch (err) {
+    toast(`Mic permission chahiye: ${esc(err.message)}`, 'bad')
+    tapMode = false
+    pendingStop = false
+  } finally {
+    starting = false
+  }
+  if (rec && pendingStop) {
+    pendingStop = false
+    stopRecording()
+  }
+}
+
+async function stopRecording(send = true) {
+  if (!rec) return
+  const r = rec
+  rec = null
+  tapMode = false
+  cancelAnimationFrame(r.raf)
+  const stopped = new Promise(res => (r.mr.onstop = res))
+  r.mr.stop()
+  await stopped
+  r.stream.getTracks().forEach(t => t.stop())
+  r.ctx.close()
+  mic.classList.remove('rec')
+  mic.style.setProperty('--lvl', 0)
+  setMicLabel('Hold to speak', 'دبا کر بولیں')
+  const secs = (performance.now() - r.t0) / 1000
+  if (!send) return
+  if (secs < 0.7) {
+    toast('Thora lamba bolein — mic daba kar rakhein')
+    return
+  }
+  const blob = new Blob(r.chunks, { type: r.mr.mimeType || 'audio/webm' })
+  mic.classList.add('busy')
+  try {
+    await api('/api/voice', { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob })
+  } catch (err) {
+    toast(`Voice failed: ${esc(err.message)}`, 'bad')
+  } finally {
+    mic.classList.remove('busy')
+  }
+}
+
+// Hold the mic to talk (release sends), or tap once to start and tap again to send.
+mic.addEventListener('pointerdown', e => {
+  e.preventDefault()
+  if ((rec || starting) && tapMode) {
+    if (rec) stopRecording()
+    else pendingStop = true
+    return
+  }
+  downAt = performance.now()
+  startRecording()
+})
+window.addEventListener('pointerup', () => {
+  if (!downAt) return
+  const held = performance.now() - downAt
+  downAt = 0
+  if (tapMode) return
+  if (held < 350) {
+    tapMode = true
+    return
+  }
+  if (rec) stopRecording()
+  else if (starting) pendingStop = true
+})
+
+const typing = () => ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)
+window.addEventListener('keydown', e => {
+  if (typing()) return
+  if (e.code === 'Space' && $('#call').hidden) {
+    // Always swallow Space: otherwise it scrolls the page or "clicks" the focused button.
+    e.preventDefault()
+    if (!e.repeat) startRecording()
+    return
+  }
+  if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return
+  if (e.key === 'c' || e.key === 'C') startCall()
+  if (e.key === 't' || e.key === 'T') toggleTheme()
+  if (e.key === 'Escape') closeOverlays()
+})
+window.addEventListener('keyup', e => {
+  if (e.code !== 'Space' || typing() || !$('#call').hidden) return
+  e.preventDefault()
+  if (rec && !tapMode) stopRecording()
+  else if (starting) pendingStop = true
+})
+
+// ---------------------------------------------------------------- live call (Gemini Live)
+
+const call = { ws: null, stream: null, inCtx: null, outCtx: null, node: null, inAn: null, outAn: null, outGain: null, sources: new Set(), nextT: 0, ready: false, t0: 0, timer: 0, raf: 0, token: null, failed: false, newYou: true, newAi: true, you: '', ai: '' }
+
+function f32ToB64(f32) {
+  const i16 = new Int16Array(f32.length)
+  for (let i = 0; i < f32.length; i++) {
+    const s = Math.max(-1, Math.min(1, f32[i]))
+    i16[i] = s < 0 ? s * 0x8000 : s * 0x7fff
+  }
+  const bytes = new Uint8Array(i16.buffer)
+  let bin = ''
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000))
+  return btoa(bin)
+}
+
+function playPcm(b64) {
+  const bin = atob(b64)
+  const bytes = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+  const i16 = new Int16Array(bytes.buffer, 0, Math.floor(bytes.length / 2))
+  const buf = call.outCtx.createBuffer(1, i16.length, 24000)
+  const ch = buf.getChannelData(0)
+  for (let i = 0; i < i16.length; i++) ch[i] = i16[i] / 0x8000
+  const src = call.outCtx.createBufferSource()
+  src.buffer = buf
+  src.connect(call.outGain)
+  const at = Math.max(call.outCtx.currentTime + 0.03, call.nextT)
+  src.start(at)
+  call.nextT = at + buf.duration
+  call.sources.add(src)
+  src.onended = () => call.sources.delete(src)
+}
+
+function stopPlayback() {
+  for (const s of call.sources) {
+    try {
+      s.stop()
+    } catch {}
+  }
+  call.sources.clear()
+  call.nextT = 0
+}
+
+const aiSpeaking = (tail = 0.35) => Boolean(call.outCtx && call.nextT > call.outCtx.currentTime - tail)
+
+function level(an) {
+  if (!an) return 0
+  const d = new Uint8Array(an.fftSize)
+  an.getByteTimeDomainData(d)
+  let s = 0
+  for (const v of d) s += ((v - 128) / 128) ** 2
+  return Math.min(1, Math.sqrt(s / d.length) * 3.2)
+}
+
+async function startCall() {
+  if (call.ws || !$('#call').hidden) return
+  closeOverlays()
+  $('#call').hidden = false
+  $('#callState').textContent = 'Connecting…'
+  $('#capYou').textContent = ''
+  $('#capAi').textContent = ''
+  $$('.action', $('#callActions')).forEach(a => a.remove())
+  $('#callTimer').textContent = '00:00'
+  // If "End call" is pressed while the mic is still opening, this token goes stale and setup stops.
+  const token = {}
+  call.token = token
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } })
+    if (call.token !== token) {
+      stream.getTracks().forEach(t => t.stop())
+      return
+    }
+    const inCtx = new AudioContext({ sampleRate: 16000 })
+    await inCtx.audioWorklet.addModule('/pcm-worklet.js')
+    if (call.token !== token) {
+      stream.getTracks().forEach(t => t.stop())
+      inCtx.close().catch(() => {})
+      return
+    }
+    call.stream = stream
+    call.inCtx = inCtx
+    const src = call.inCtx.createMediaStreamSource(call.stream)
+    call.node = new AudioWorkletNode(call.inCtx, 'pcm-capture')
+    call.inAn = call.inCtx.createAnalyser()
+    call.inAn.fftSize = 512
+    src.connect(call.inAn)
+    src.connect(call.node)
+    const sink = call.inCtx.createGain()
+    sink.gain.value = 0
+    call.node.connect(sink).connect(call.inCtx.destination)
+
+    call.outCtx = new AudioContext({ sampleRate: 24000 })
+    call.outGain = call.outCtx.createGain()
+    call.outAn = call.outCtx.createAnalyser()
+    call.outAn.fftSize = 512
+    call.outGain.connect(call.outAn)
+    call.outAn.connect(call.outCtx.destination)
+  } catch (err) {
+    toast(`Mic needed for the call: ${esc(err.message)}`, 'bad')
+    endCall()
+    return
+  }
+
+  const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/live`)
+  call.ws = ws
+  ws.onmessage = e => onCallMessage(JSON.parse(e.data))
+  ws.onclose = () => {
+    if (call.ws === ws) endCall()
+  }
+  ws.onerror = () => toast('Live connection error', 'bad')
+
+  call.node.port.onmessage = e => {
+    if (!call.ready || ws.readyState !== WebSocket.OPEN) return
+    if ($('#stageMode').checked && aiSpeaking()) return
+    ws.send(JSON.stringify({ type: 'audio', data: f32ToB64(e.data) }))
+  }
+
+  const orb = $('#orb')
+  const loop = () => {
+    if (!call.ws) return
+    const speaking = aiSpeaking(0)
+    const lvl = speaking ? level(call.outAn) : level(call.inAn)
+    orb.style.setProperty('--lvl', lvl.toFixed(3))
+    orb.classList.toggle('speaking', speaking)
+    if (call.ready && !call.failed) $('#callState').textContent = speaking ? 'Bol raha hai…' : 'Sun raha hai…'
+    call.raf = requestAnimationFrame(loop)
+  }
+  loop()
+}
+
+function onCallMessage(m) {
+  switch (m.type) {
+    case 'ready':
+      call.ready = true
+      call.t0 = Date.now()
+      $('#callModel').textContent = m.model
+      call.timer = setInterval(() => {
+        const s = Math.floor((Date.now() - call.t0) / 1000)
+        $('#callTimer').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+      }, 500)
+      break
+    case 'audio':
+      if (call.outCtx) playPcm(m.data)
+      break
+    // Transcripts stream in pieces and the user's can arrive after Hisaab starts talking,
+    // so buffers reset only when a new turn begins, never on a role switch.
+    case 'you':
+      if (call.newYou) {
+        call.you = ''
+        call.newYou = false
+      }
+      call.you += m.text
+      $('#capYou').textContent = call.you.trim()
+      break
+    case 'ai':
+      if (call.newAi) {
+        call.ai = ''
+        call.newAi = false
+      }
+      call.ai += m.text
+      $('#capAi').textContent = call.ai.trim()
+      break
+    case 'interrupted':
+      stopPlayback()
+      call.newYou = call.newAi = true
+      break
+    case 'turn_complete':
+      call.newYou = call.newAi = true
+      break
+    case 'action':
+      addAction(m)
+      break
+    case 'go_away':
+      toast('Call will end soon (session limit)')
+      break
+    case 'error':
+      toast(`Live: ${esc(m.message)}`, 'bad')
+      call.failed = true
+      $('#callState').textContent = 'Connection error'
+      break
+    case 'closed':
+      if (m.reason) toast(`Live call ended: ${esc(m.reason)}`, 'bad')
+      endCall()
+      break
+  }
+}
+
+const ACTION_LABEL = {
+  add_udhaar: 'Udhaar likha',
+  record_payment: 'Wapsi likhi',
+  get_balance: 'Hisaab dekha',
+  list_dues: 'Udhaar list',
+  shop_summary: 'Dukan ka hisaab',
+  undo_last: 'Entry cancel',
+  send_reminder: 'Reminder tayyar',
+}
+
+const ASK_LABEL = {
+  needs_amount: 'Kitne paise?',
+  needs_name: 'Kis ka khata?',
+  not_found: 'Khata nahi mila',
+  already_clear: 'Pehle se saaf',
+  nothing_to_undo: 'Koi entry nahi',
+}
+
+function addAction(m) {
+  const r = m.result || {}
+  const a = document.createElement('div')
+  a.className = 'action'
+  let main = ''
+  let sub = ''
+  if (!['written', 'cancelled', 'ok'].includes(r.status)) {
+    // The tool asked a question instead of writing; show it as a question, not as a ledger write.
+    const who = r.candidates?.length ? `Kaun? ${r.candidates.map(esc).join(' / ')}` : ASK_LABEL[r.status] || 'Sawal'
+    a.innerHTML = `<div class="a-top"><span>Sawal</span><span>${clock(m.ts)}</span></div><div class="a-main">${who}</div>${r.customer ? `<div class="a-bal">${esc(r.customer)}</div>` : ''}`
+    $('#callActions').appendChild(a)
+    $('#callActions').scrollTop = 1e6
+    return
+  }
+  if (r.kind === 'credit' || r.kind === 'payment') {
+    main = `<div class="a-main ${r.kind}">${esc(r.customer)} · ${r.kind === 'credit' ? '+' : '−'}${fmt(r.amount)}</div>`
+    sub = `Baqaya ${fmt(r.balance_now)}`
+  } else if (r.status === 'cancelled') {
+    main = `<div class="a-main">${esc(r.customer)} · ${fmt(r.cancelled_amount)} cancel</div>`
+    sub = `Baqaya ${fmt(r.balance_now)}`
+  } else if (r.customers) {
+    main = `<div class="a-main">${r.count} customers</div>`
+    sub = r.customers.slice(0, 4).map(x => `${esc(x.name)} ${fmt(x.balance)}`).join(' · ')
+  } else if (r.total_udhaar != null) {
+    main = `<div class="a-main">Kul ${fmt(r.total_udhaar)}</div>`
+    sub = `Aaj diya ${fmt(r.given_today)} · wasool ${fmt(r.collected_today)}`
+  } else if (r.customer) {
+    main = `<div class="a-main">${esc(r.customer)}</div>`
+    sub = `Baqaya ${fmt(r.balance_now)}`
+  } else {
+    main = `<div class="a-main">${esc(r.status || 'done')}</div>`
+  }
+  a.innerHTML = `<div class="a-top"><span>${ACTION_LABEL[m.name] || m.name}</span><span>${clock(m.ts)}</span></div>${main}<div class="a-bal">${sub}</div>${m.link ? `<a href="${m.link}" target="_blank" rel="noopener">Payment link ${icon('ext', 'ic')}</a>` : ''}`
+  $('#callActions').appendChild(a)
+  $('#callActions').scrollTop = 1e6
+}
+
+function endCall() {
+  const ws = call.ws
+  call.ws = null
+  call.token = null
+  call.ready = false
+  call.failed = false
+  if (ws && ws.readyState <= 1) ws.close()
+  cancelAnimationFrame(call.raf)
+  clearInterval(call.timer)
+  stopPlayback()
+  call.stream?.getTracks().forEach(t => t.stop())
+  call.inCtx?.close().catch(() => {})
+  call.outCtx?.close().catch(() => {})
+  Object.assign(call, { stream: null, inCtx: null, outCtx: null, node: null, inAn: null, outAn: null, outGain: null, newYou: true, newAi: true, you: '', ai: '' })
+  $('#call').hidden = true
+}
+
+$('#callBtn').addEventListener('click', startCall)
+$('#endBtn').addEventListener('click', endCall)
+
+// ---------------------------------------------------------------- customer drawer
+
+async function openCustomer(id) {
+  let d
+  try {
+    d = await api(`/api/customer/${id}`)
+  } catch {
+    return
+  }
+  const body = $('#drawerBody')
+  const sourceLabel = s => ({ whatsapp: 'WhatsApp', dashboard: 'Dashboard', live: 'Live call', raast: 'Raast', seed: 'Purana khata' }[s] || s)
+  body.innerHTML = `
+    <div class="d-head">
+      <div class="avatar" style="background:${avatarColor(d.name)}">${esc(initials(d.name))}</div>
+      <div><div class="d-name">${esc(d.name)}</div><div class="urdu d-name-ur">${esc(d.nameUrdu || '')}</div></div>
+    </div>
+    <div class="d-bal"><div class="lbl">${balLabel(d.balance)}</div><div class="v bal-v ${balClass(d.balance)}">${fmt(d.balance)}</div></div>
+    <div class="d-actions">
+      <button class="btn primary" id="remBtn" type="button" ${d.balance > 0 ? '' : 'disabled'}>${icon('bell')}Reminder + payment link</button>
+    </div>
+    <div id="draftZone"></div>
+    <div class="timeline">${d.entries.map(e => `
+      <div class="t-row ${e.voided ? 'voided' : ''}">
+        <div><b>${e.kind === 'credit' ? 'Udhaar' : 'Wapsi'}</b>${e.items?.length ? ` · ${esc(e.items.join(', '))}` : ''}</div>
+        <div class="t-amt ${e.kind}">${e.kind === 'credit' ? '+' : '−'}${fmt(e.amount)}</div>
+        <div class="t-meta">${new Date(e.ts).toLocaleString('en-PK', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })} · ${sourceLabel(e.source)}${e.voided ? ' · cancelled' : ''}</div>
+      </div>`).join('') || '<p class="muted">Koi entry nahi</p>'}</div>`
+  $('#drawer').hidden = false
+  $('#remBtn')?.addEventListener('click', async () => {
+    const r = await api(`/api/reminder/${id}`, { method: 'POST' })
+    $('#draftZone').innerHTML = `<div class="draft">${waFormat(r.text)}
+      <div class="draft-actions">
+        <button class="btn" id="copyBtn" type="button">${icon('copy')}Copy</button>
+        <a class="btn" href="${r.path}" target="_blank" rel="noopener">${icon('ext')}Open payment page</a>
+      </div></div>`
+    $('#copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(r.text.replace(/\*/g, ''))
+        toast('Reminder copied — WhatsApp par forward karein')
+      } catch {
+        toast('Copy failed', 'bad')
+      }
+    })
+  })
+}
+
+// ---------------------------------------------------------------- overlays, menu, theme, sound
+
+function closeOverlays() {
+  $('#drawer').hidden = true
+  $('#menu').hidden = true
+  if (!$('#qrModal').hidden) {
+    $('#qrModal').hidden = true
+    S.qrDismissed = true
+  }
+}
+
+$$('[data-close]').forEach(b => b.addEventListener('click', closeOverlays))
+$$('.modal, .drawer').forEach(m => m.addEventListener('click', e => {
+  if (e.target === m) closeOverlays()
+}))
+
+$('#waPill').addEventListener('click', () => {
+  S.qrDismissed = false
+  $('#qrModal').hidden = false
+  renderWa()
+})
+
+$('#moreBtn').addEventListener('click', e => {
+  e.stopPropagation()
+  $('#menu').hidden = !$('#menu').hidden
+})
+document.addEventListener('click', e => {
+  if (!e.target.closest('.menu-wrap')) $('#menu').hidden = true
+})
+$('#menu').addEventListener('click', async e => {
+  const act = e.target.closest('button')?.dataset.act
+  $('#menu').hidden = true
+  if (act === 'undo') {
+    const r = await api('/api/undo', { method: 'POST' })
+    toast(r.status === 'ok' ? `Cancelled: ${esc(r.customer.name)} ${fmt(r.entry.amount)}` : 'Nothing to undo')
+  }
+  if (act === 'qr') $('#waPill').click()
+  if (act === 'reset' && confirm('Reset to demo data? All entries will be replaced.')) {
+    await api('/api/reset', { method: 'POST' })
+    S.feed.clear()
+    renderFeed()
+    toast('Demo data reset')
+  }
+  if (act === 'logout' && confirm('Unlink this WhatsApp from Hisaab?')) {
+    await api('/api/wa/logout', { method: 'POST' })
+    toast('WhatsApp unlinked — scan a new QR to link again')
+  }
+})
+
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t
+  $('#themeBtn').innerHTML = icon(t === 'dark' ? 'sun' : 'moon')
+}
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
+  applyTheme(next)
+  pref.set('theme', next)
+  try {
+    localStorage.setItem('hisaab-theme', next)
+  } catch {}
+}
+$('#themeBtn').addEventListener('click', toggleTheme)
+applyTheme(document.documentElement.dataset.theme || 'light')
+
+function renderSound() {
+  $('#soundBtn').innerHTML = icon(S.autoplay ? 'vol' : 'volx')
+  $('#soundBtn').setAttribute('aria-pressed', String(S.autoplay))
+  $('#soundBtn').title = S.autoplay ? 'Voice replies auto-play (on)' : 'Voice replies auto-play (off)'
+}
+$('#soundBtn').addEventListener('click', () => {
+  S.autoplay = !S.autoplay
+  pref.set('autoplay', S.autoplay)
+  renderSound()
+})
+renderSound()
+
+connect()

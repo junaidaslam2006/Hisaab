@@ -1,0 +1,644 @@
+/* ================= Onboarding (/welcome) =================
+   Step 2 of 2: the shop form in one square ink frame (linked-WhatsApp cells on top).
+   Then the first voice note: a [1]–[3] guide with the exact sentence on a sage card,
+   a live frame that fills in YOU SAID / WRITTEN / REPLY cells, and a footnote. */
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+}
+.welcome-page > .page-header {
+  margin-block-end: var(--s7);
+}
+.welcome-page h1:focus {
+  outline: none;
+}
+.welcome-page .page-header .lead .num {
+  font-family: var(--font-sans);
+  font-size: 0.86em;
+  white-space: nowrap;
+  unicode-bidi: isolate;
+}
+
+.welcome-skel-head {
+  margin-block-end: var(--s7);
+}
+.welcome-skel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding: var(--s5);
+}
+
+/* ---------- step 1: the shop form ---------- */
+.welcome-form > .frame-head {
+  padding-block-end: var(--s4);
+}
+.welcome-linked {
+  border-block: 1px solid var(--frame);
+}
+.welcome-linked .cell-value {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
+.welcome-linked-phone {
+  font-family: var(--font-sans);
+  font-size: var(--t-lg);
+  font-weight: 600;
+  line-height: 1.3;
+  unicode-bidi: isolate;
+}
+.welcome-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+.welcome-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s4);
+}
+
+/* Voice replies */
+.welcome-voice {
+  min-height: 44px;
+  color: var(--ink);
+}
+.welcome-voice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.welcome-voice-title {
+  font-size: var(--t-sm);
+  font-weight: 600;
+}
+.welcome-voice-hint {
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+:where(html[lang='ur']) .welcome-voice-title {
+  font-size: 15px;
+}
+:where(html[lang='ur']) .welcome-voice-hint {
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* Dashboard language: two square cards; the chosen one is sage with an ink hairline. */
+.welcome-lang {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.welcome-lang legend {
+  padding: 0;
+  margin-block-end: var(--s2);
+}
+.welcome-lang-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s3);
+}
+.welcome-lang-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 76px;
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-raised);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+.welcome-lang-card:hover {
+  border-color: var(--ink-4);
+}
+.welcome-lang-card input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.welcome-lang-card:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.welcome-lang-card:has(input:checked) {
+  /* Sage surface: the darker on-sage greys keep the sub-label >= 4.5:1. */
+  --ink-2: var(--on-sage-2);
+  --ink-3: var(--on-sage-2);
+  border-color: var(--frame);
+  background: var(--sage);
+}
+.welcome-lang-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.welcome-lang-name {
+  font-size: var(--t-xl);
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.welcome-lang-name.latin {
+  font-family: var(--font-serif);
+}
+.welcome-lang-name.ur {
+  font-size: var(--t-xl);
+  line-height: 1.7;
+}
+.welcome-lang-sub {
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.welcome-lang-sub.ur {
+  font-family: var(--font-urdu);
+  font-size: var(--t-sm);
+  line-height: 1.8;
+}
+.welcome-lang-check {
+  flex: none;
+  visibility: hidden;
+}
+.welcome-lang-card:has(input:checked) .welcome-lang-check {
+  visibility: visible;
+}
+
+.welcome-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--frame);
+  background: var(--owed-tint);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: var(--owed);
+}
+.welcome-error .icon {
+  width: 18px;
+  height: 18px;
+  margin-block-start: 1px;
+}
+.welcome-form-foot {
+  padding: var(--s4) var(--s5) var(--s5);
+  border-block-start: 1px solid var(--frame);
+}
+.welcome-form-foot .btn {
+  min-width: 240px;
+}
+
+/* ---------- step 2: the [1]–[3] guide ---------- */
+.welcome-guide-label {
+  margin-block-end: var(--s5);
+}
+.welcome-guide > ol > li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-items: baseline;
+  padding-block: var(--s6);
+  border-block-start: 1px solid var(--rule);
+}
+.welcome-guide > ol > li:first-child {
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+.welcome-guide-n {
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.welcome-guide-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  min-width: 0;
+}
+.welcome-guide-title {
+  font-family: var(--f-head);
+  font-size: var(--t-xl);
+  font-weight: 400;
+  line-height: 1.3;
+}
+.welcome-guide-title .icon {
+  display: inline-block;
+  vertical-align: -3px;
+  margin-inline-end: var(--s1);
+  color: var(--ink-2);
+}
+.welcome-guide-text {
+  margin-block-start: calc(-1 * var(--s2));
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+}
+:where(html[lang='ur']) .welcome-guide-title {
+  font-size: 20px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .welcome-guide-text {
+  line-height: 2.1;
+}
+
+/* WhatsApp chat-list row (illustration only) */
+.welcome-chatrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  max-width: 320px;
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--frame);
+  background: var(--surface-raised);
+  font-family: var(--font-sans);
+}
+.welcome-chatrow-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+.welcome-chatrow-name {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.welcome-chatrow-sub {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+
+/* The exact sentence: Roman and Urdu script, the UI language's line first, both on the UI's start side. */
+.welcome-say .quote-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.welcome-page .welcome-say-roman {
+  font-family: var(--font-serif);
+  font-size: var(--t-xl);
+  line-height: 1.35;
+  text-align: start;
+}
+.welcome-page .welcome-say-urdu {
+  font-family: var(--font-urdu);
+  font-size: var(--t-xl);
+  line-height: 1.9;
+  text-align: end;
+}
+.welcome-pays {
+  display: flex;
+  flex-direction: column;
+}
+.welcome-page .welcome-pays-roman {
+  font-family: var(--font-sans);
+  text-align: start;
+}
+.welcome-page .welcome-pays-urdu {
+  font-family: var(--font-urdu);
+  text-align: end;
+}
+:where(html[lang='ur']) .welcome-page :is(.welcome-say-roman, .welcome-pays-roman) {
+  text-align: end;
+}
+:where(html[lang='ur']) .welcome-page :is(.welcome-say-urdu, .welcome-pays-urdu) {
+  order: -1;
+  text-align: start;
+}
+
+/* ---------- live frame ---------- */
+.welcome-live {
+  margin-block-start: var(--s6);
+}
+.welcome-live > .frame-head {
+  padding-block-end: var(--s4);
+  border-block-end: 1px solid var(--frame);
+}
+.welcome-live-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+.welcome-pad {
+  padding: var(--s5);
+}
+.welcome-wait {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.welcome-wait-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  font-family: var(--f-head);
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+.welcome-wait-title .spinner {
+  color: var(--ink);
+}
+.welcome-wait-text {
+  max-width: 48ch;
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.welcome-wait-text .num {
+  white-space: nowrap;
+}
+.welcome-pulse {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: welcome-pulse 1.4s ease-in-out infinite;
+}
+@keyframes welcome-pulse {
+  50% {
+    opacity: 0.2;
+  }
+}
+.welcome-offline {
+  padding: var(--s2) var(--s3);
+  border-inline-start: 2px solid var(--warn);
+  background: var(--warn-tint);
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--warn);
+}
+:where(html[lang='ur']) .welcome-wait-title {
+  font-size: 20px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(.welcome-wait-text, .welcome-offline) {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* Result cells, edge to edge inside the frame, split by ink hairlines; Hisaab's reply on sage. */
+.welcome-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s3);
+  padding: var(--s4) var(--s5) var(--s5);
+  border-block-start: 1px solid var(--frame);
+}
+.welcome-cell > * {
+  max-width: 100%;
+}
+.welcome-cell.is-reply {
+  background: var(--sage);
+}
+.welcome-cell.is-reply > .label {
+  color: var(--ink);
+}
+.welcome-heard-urdu {
+  font-size: var(--t-xl);
+  line-height: 2;
+  color: var(--ink);
+}
+.welcome-page .welcome-heard-roman {
+  font-family: var(--font-serif);
+  font-size: var(--t-md);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.welcome-reply-text {
+  align-self: stretch;
+  text-align: start;
+}
+
+.welcome-result-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.welcome-result-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--f-head);
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+.welcome-result-title.is-ok .icon {
+  color: var(--paid);
+}
+.welcome-result-title.is-warn .icon {
+  color: var(--warn);
+}
+.welcome-result-err {
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--warn);
+}
+:where(html[lang='ur']) .welcome-result-title {
+  font-size: 20px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .welcome-result-err {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.welcome-rows {
+  align-self: stretch;
+}
+.welcome-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  padding-block: var(--s3);
+  border-block-start: 1px solid var(--rule);
+}
+.welcome-row:first-child {
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+.welcome-row:last-child {
+  padding-block-end: 0;
+}
+.welcome-row-icon {
+  margin-block-start: 3px;
+  color: var(--ink-2);
+}
+.welcome-row.is-owed .welcome-row-icon {
+  color: var(--owed);
+}
+.welcome-row.is-paid .welcome-row-icon {
+  color: var(--paid);
+}
+.welcome-row.is-warn .welcome-row-icon {
+  color: var(--warn);
+}
+.welcome-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.welcome-row-text {
+  font-family: var(--f-ui);
+  font-size: var(--t-md);
+  line-height: 1.45;
+}
+.welcome-row-meta {
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .welcome-row-text {
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .welcome-row-meta {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.welcome-result-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s3);
+  border-block-start: 1px solid var(--frame);
+}
+.welcome-again {
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+:where(html[lang='ur']) .welcome-again {
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* ---------- typing test ---------- */
+.welcome-type {
+  margin-block-start: var(--s5);
+  border-block-end: 1px solid var(--rule-strong);
+}
+.welcome-type-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  width: 100%;
+  min-height: 52px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-align: start;
+}
+.welcome-type-toggle .icon {
+  color: var(--ink-2);
+}
+.welcome-type-toggle:hover > span {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.welcome-type-chev {
+  margin-inline-start: auto;
+  transition: transform var(--dur) var(--ease);
+}
+.welcome-type-toggle[aria-expanded='true'] .welcome-type-chev {
+  transform: rotate(180deg);
+}
+.welcome-type-form {
+  padding-block: var(--s2) var(--s5);
+}
+.welcome-type-row {
+  display: flex;
+  gap: var(--s2);
+}
+.welcome-type-row .input {
+  flex: 1;
+  min-width: 0;
+}
+.welcome-type-row .btn {
+  min-height: 44px;
+}
+:where(html[lang='ur']) .welcome-type-toggle {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.welcome-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s3);
+  margin-block-start: var(--s5);
+}
+.welcome-page > .footnotes {
+  margin-block-start: var(--s8);
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 719px) {
+  .welcome-page > .page-header,
+  .welcome-skel-head {
+    margin-block-end: var(--s6);
+  }
+  .welcome-pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .welcome-form-foot {
+    padding-inline: var(--s4);
+  }
+  .welcome-form-foot .btn {
+    width: 100%;
+    min-width: 0;
+  }
+  .welcome-guide > ol > li {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    padding-block: var(--s5);
+  }
+  .welcome-pad {
+    padding: var(--s4);
+  }
+  .welcome-cell {
+    padding-inline: var(--s4);
+  }
+  .welcome-result-foot {
+    align-items: stretch;
+  }
+  .welcome-foot {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .welcome-page > .footnotes {
+    margin-block-start: var(--s7);
+  }
+}
+@media (max-width: 400px) {
+  .welcome-lang-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

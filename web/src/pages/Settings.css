@@ -1,0 +1,950 @@
+/* Settings — a short launch post about the shop: contents with live values at the inline start,
+   then sections of serif h2 + one serif sentence + a square ink frame of controls. */
+.set-page {
+  min-width: 0;
+}
+
+.set-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s7);
+}
+@media (min-width: 960px) {
+  .set-layout {
+    grid-template-columns: minmax(200px, 248px) minmax(0, 1fr);
+    column-gap: var(--s8);
+  }
+  .set-aside > .toc {
+    position: sticky;
+    top: calc(var(--header-h) + var(--s6));
+  }
+}
+
+/* ---------- contents: "[2] WhatsApp ······ ● Connected" ---------- */
+.set-toc .toc-label {
+  flex: none;
+}
+.set-toc .toc-meta {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.set-toc-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* dir="auto" on this box puts the ellipsis at the end of the name in its own script. */
+.set-toc-shop {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- sections ---------- */
+.set-sections {
+  min-width: 0;
+}
+.set-section + .set-section {
+  margin-block-start: var(--s8);
+}
+.set-intro {
+  max-width: 60ch;
+  margin-block-start: var(--s3);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.set-section > .frame {
+  margin-block-start: var(--s6);
+}
+.set-section > .frame + .frame {
+  margin-block-start: var(--s4);
+}
+.set-frame-title {
+  margin-block-start: var(--s1);
+  font-family: var(--f-head);
+  font-size: var(--t-xl);
+  font-weight: 400;
+  line-height: 1.3;
+}
+.set-note {
+  max-width: 60ch;
+  margin-block-start: var(--s2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.set-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+/* ---------- [1] shop profile form ---------- */
+.set-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s5) var(--s4);
+  align-items: start;
+}
+.set-span {
+  grid-column: 1 / -1;
+}
+.set-form .frame-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s2);
+}
+.set-foot-note {
+  margin-inline-end: auto;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--warn);
+}
+.set-foot-note:empty {
+  display: none;
+}
+
+/* ---------- payment details: account title, up to three ways to pay, the reminder as the customer reads it ---------- */
+.set-pay > .frame-body {
+  display: grid;
+  gap: var(--s5);
+}
+.set-pay-methods {
+  display: grid;
+}
+.set-pay-method {
+  min-width: 0;
+  padding-block: var(--s4) var(--s5);
+  border-block-start: 1px solid var(--rule);
+}
+.set-pay-method:last-child {
+  padding-block-end: 0;
+}
+.set-pay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 44px;
+  margin-block-end: var(--s2);
+}
+.set-pay-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--s5) var(--s4);
+  align-items: start;
+}
+.set-pay-add {
+  justify-self: start;
+}
+.set-pay-preview .quote-text {
+  font-size: var(--t-md);
+}
+.set-pay-hl {
+  padding-inline: 2px;
+  background: var(--sage);
+  color: inherit;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.set-pay-empty {
+  display: block;
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.set-pay-note {
+  margin-block-start: 0;
+}
+
+/* ---------- [2] WhatsApp: status, labelled cells, actions ---------- */
+.set-wa-status {
+  padding: var(--s4) var(--s5) var(--s5);
+}
+.set-wa-status > .label {
+  display: block;
+  margin-block-end: var(--s2);
+}
+.set-wa-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-head);
+  font-size: 26px;
+  line-height: 1.2;
+}
+.set-wa-state .status-dot {
+  width: 10px;
+  height: 10px;
+}
+.set-wa-state.bad {
+  color: var(--owed);
+}
+.set-wa-text {
+  max-width: 60ch;
+  margin-block-start: var(--s2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.set-wa > .cells {
+  border-block: 1px solid var(--frame);
+}
+.set-wa .cell-value {
+  font-size: var(--t-md);
+  overflow-wrap: anywhere;
+}
+.set-wa > .set-actions {
+  padding: var(--s4) var(--s5);
+}
+.set-caption {
+  margin-block-start: var(--s4);
+}
+
+/* ---------- [3] voice replies: a pill switch over a real checkbox ---------- */
+.set-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: var(--s4) var(--s5);
+}
+.set-row-text {
+  flex: 1;
+  min-width: 0;
+}
+.set-row-title {
+  display: block;
+  font-size: var(--t-md);
+  font-weight: 600;
+}
+.set-row-hint {
+  margin-block-start: 2px;
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+.set-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 44px;
+  flex: none;
+  cursor: pointer;
+}
+.set-switch input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.set-switch-track {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 30px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunk);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.set-switch-knob {
+  position: absolute;
+  top: 3px;
+  inset-inline-start: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1px var(--frame);
+  transition: transform var(--dur) var(--ease);
+}
+.set-switch input:checked + .set-switch-track {
+  background: var(--ink);
+  box-shadow: none;
+}
+.set-switch input:checked + .set-switch-track .set-switch-knob {
+  background: var(--paper);
+  box-shadow: none;
+  transform: translateX(22px);
+}
+[dir='rtl'] .set-switch input:checked + .set-switch-track .set-switch-knob {
+  transform: translateX(-22px);
+}
+.set-switch input:focus-visible + .set-switch-track {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.set-switch input:disabled {
+  cursor: progress;
+}
+.set-switch input:disabled + .set-switch-track {
+  opacity: 0.6;
+}
+.set-switch-state {
+  min-width: 2.2em;
+  font-size: var(--t-sm);
+  font-weight: 600;
+}
+
+/* ---------- [4] language: two cells, the chosen one in sage ---------- */
+.set-lang {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.set-legend {
+  float: inline-start;
+  width: 100%;
+  padding: var(--s3) var(--s5);
+  border-block-end: 1px solid var(--frame);
+}
+.set-lang-options {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.set-lang-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  min-height: 96px;
+  padding: var(--s4) var(--s5) var(--s5);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease);
+}
+.set-lang-option + .set-lang-option {
+  border-inline-start: 1px solid var(--frame);
+}
+.set-lang-option:hover {
+  background: var(--paper-2);
+}
+.set-lang-option.is-on {
+  background: var(--sage);
+}
+.set-lang-option input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 5px 0 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+.set-lang-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.set-lang-title.latin {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.25;
+}
+.set-lang-title.ur {
+  font-family: var(--font-urdu);
+  font-size: 22px;
+  line-height: 1.7;
+}
+.set-lang-hint {
+  color: var(--ink-2);
+}
+.set-lang-hint.latin {
+  margin-block-start: var(--s1);
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  line-height: 1.4;
+}
+.set-lang-hint.ur {
+  font-family: var(--font-urdu);
+  font-size: var(--t-sm);
+  line-height: 1.9;
+}
+.set-lang-option.is-on .set-lang-hint {
+  color: var(--ink);
+}
+
+/* ---------- [5] your data: export, then the danger zone ---------- */
+.set-export,
+.set-danger {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s4) var(--s6);
+  padding: var(--s4) var(--s5) var(--s5);
+}
+.set-export-text,
+.set-danger-text {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+.set-danger-label {
+  color: var(--owed);
+}
+.set-danger-body {
+  max-width: 60ch;
+  margin-block-start: var(--s2);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.5;
+}
+
+/* ---------- lists: General first, then each list with its kind, people and money ---------- */
+.set-list-rows > li + li,
+.set-lists-loading > .set-list-row + .set-list-row {
+  border-block-start: 1px solid var(--rule);
+}
+.set-list-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3) var(--s4);
+  min-height: 64px;
+  padding: var(--s3) var(--s5);
+}
+.set-list-row.is-general {
+  background: var(--paper-2);
+}
+.set-list-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.set-list-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s2);
+  min-width: 0;
+}
+.set-list-name {
+  font-size: var(--t-md);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.set-list-alt {
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+.set-list-alt.ur {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.set-list-title .badge {
+  align-self: center;
+}
+.set-list-meta {
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.set-list-kind {
+  font-weight: 600;
+  color: var(--ink);
+}
+.set-list-meta .money {
+  font-size: inherit;
+}
+.set-list-actions {
+  display: flex;
+  flex: none;
+  gap: var(--s1);
+}
+.set-lists-loading .set-list-main {
+  gap: var(--s2);
+}
+.set-lists-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s4) var(--s5);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+.set-lists-frame .frame-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s2) var(--s4);
+}
+.set-lists-full {
+  font-weight: 500;
+}
+.set-caption q {
+  font-style: italic;
+}
+
+/* New list / rename sheet */
+.set-list-form {
+  display: grid;
+  gap: var(--s5);
+}
+.set-kind {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.set-kind > legend {
+  margin-block-end: var(--s2);
+  padding: 0;
+}
+.set-kind-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--frame);
+}
+.set-kind-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease);
+}
+.set-kind-option + .set-kind-option {
+  border-inline-start: 1px solid var(--frame);
+}
+.set-kind-option:hover {
+  background: var(--paper-2);
+}
+.set-kind-option.is-on {
+  background: var(--sage);
+}
+.set-kind-option input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+.set-kind-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.set-kind-title {
+  font-size: var(--t-md);
+  font-weight: 600;
+}
+.set-kind-hint {
+  font-size: var(--t-xs);
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.set-kind-option.is-on .set-kind-hint {
+  color: var(--on-sage-2);
+}
+
+/* ---------- system check: a status line, four result rows, the run pill ---------- */
+.set-check-status {
+  padding: var(--s4) var(--s5) var(--s5);
+  border-block-end: 1px solid var(--frame);
+}
+.set-check-status > .label {
+  display: block;
+  margin-block-end: var(--s2);
+}
+.set-check-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-head);
+  font-size: 26px;
+  line-height: 1.2;
+}
+.set-check-state .status-dot {
+  width: 10px;
+  height: 10px;
+}
+.set-check-state.bad {
+  color: var(--owed);
+}
+.set-check-rows > li + li {
+  border-block-start: 1px solid var(--rule);
+}
+.set-check-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: var(--s1) var(--s3);
+  align-items: start;
+  padding: var(--s4) var(--s5);
+}
+.set-check-mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+}
+.set-check-row.is-ok .set-check-mark {
+  background: var(--paid-tint);
+  color: var(--paid);
+}
+.set-check-row.is-bad .set-check-mark {
+  background: var(--owed-tint);
+  color: var(--owed);
+}
+.set-check-mark .icon {
+  width: 16px;
+  height: 16px;
+}
+.set-check-mark .spinner {
+  width: 16px;
+  height: 16px;
+}
+.set-check-blank {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-4);
+}
+.set-check-name {
+  font-family: var(--f-ui);
+  font-size: var(--t-md);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.set-check-what {
+  font-size: var(--t-xs);
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.set-check-detail {
+  max-width: 64ch;
+  margin-block-start: var(--s2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.set-check-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1) var(--s5);
+  margin-block-start: var(--s2);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.set-check-part {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.set-check-part > dt {
+  font-weight: 600;
+  color: var(--ink);
+}
+.set-check-part > dd {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.set-check-part .icon {
+  width: 14px;
+  height: 14px;
+}
+.set-check-part .icon.is-ok {
+  color: var(--paid);
+}
+.set-check-part .icon.is-bad {
+  color: var(--owed);
+}
+.set-check-model {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.set-check-audio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s3);
+  margin-block-start: var(--s3);
+}
+.set-check-fix {
+  max-width: 64ch;
+  margin-block-start: var(--s3);
+  padding: var(--s2) var(--s3);
+  border-inline-start: 2px solid var(--warn);
+  background: var(--warn-tint);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+.set-check-fix strong {
+  font-weight: 600;
+}
+.set-check-action {
+  margin-block-start: var(--s3);
+}
+.set-check-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  text-align: end;
+  white-space: nowrap;
+}
+.set-check-word {
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.set-check-row.is-ok .set-check-word {
+  color: var(--paid);
+}
+.set-check-row.is-bad .set-check-word {
+  color: var(--owed);
+}
+.set-check-ms {
+  color: var(--ink-3);
+}
+.set-check-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s4) var(--s6);
+  padding: var(--s4) var(--s5) var(--s5);
+  border-block-start: 1px solid var(--frame);
+}
+.set-check-send {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.set-check-send-title {
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+}
+.set-check-send-hint {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.set-check-go {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s2);
+}
+.set-check-wait {
+  max-width: 34ch;
+  font-size: var(--t-xs);
+  line-height: 1.45;
+  color: var(--ink-2);
+  text-align: end;
+}
+.set-check-wait.is-error {
+  font-weight: 600;
+  color: var(--owed);
+}
+
+/* ---------- sample data: one frame, add (secondary) or remove (danger) ---------- */
+.set-sample {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s4) var(--s6);
+  padding: var(--s4) var(--s5) var(--s5);
+}
+.set-sample.is-on {
+  background: var(--sand);
+}
+.set-sample-text {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+/* ---------- this device: end matter under the heavy rule ---------- */
+.set-device {
+  margin-block-start: var(--s9);
+  padding-block-start: var(--s6);
+  border-block-start: 2px solid var(--rule-heavy);
+}
+.set-device-title {
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+.set-device-who {
+  margin-block-start: var(--s3);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.5;
+}
+.set-device > .btn {
+  margin-block-start: var(--s5);
+}
+/* The sign-out arrow points out of the reading direction, like the account menu's (Button only mirrors arrows). */
+[dir='rtl'] .set-device > .btn .icon {
+  transform: scaleX(-1);
+}
+
+.set-page bdi.num {
+  white-space: nowrap;
+}
+
+/* ---------- Urdu: Nastaliq needs taller lines ---------- */
+:where(html[lang='ur']) .set-intro {
+  line-height: 2.1;
+}
+:where(html[lang='ur']) .set-frame-title {
+  font-size: 20px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(.set-note, .set-wa-text, .set-row-hint) {
+  font-size: 15px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-row-title {
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-wa-state {
+  font-size: 22px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-foot-note {
+  font-size: 14px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-danger-body {
+  line-height: 2.1;
+}
+:where(html[lang='ur']) .set-device-title {
+  font-size: 21px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-device-who {
+  line-height: 2;
+}
+:where(html[lang='ur']) :is(.set-list-name, .set-kind-title, .set-check-name, .set-check-send-title) {
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(.set-list-meta, .set-kind-hint, .set-check-what, .set-check-send-hint, .set-check-wait, .set-check-end) {
+  font-size: 14px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(.set-check-detail, .set-check-fix) {
+  font-size: 15px;
+  line-height: 2;
+}
+:where(html[lang='ur']) .set-check-state {
+  font-size: 22px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-check-parts {
+  font-size: 14px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .set-pay-empty {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 719px) {
+  .set-section + .set-section {
+    margin-block-start: var(--s7);
+  }
+  .set-section > .frame {
+    margin-block-start: var(--s5);
+  }
+  .set-wa-status,
+  .set-wa > .set-actions,
+  .set-switch-row,
+  .set-export,
+  .set-danger,
+  .set-lang-option,
+  .set-list-row,
+  .set-lists-error,
+  .set-check-status,
+  .set-check-row,
+  .set-check-foot,
+  .set-sample {
+    padding-inline: var(--s4);
+  }
+  .set-lists-frame .frame-foot {
+    padding-inline: var(--s4);
+  }
+  .set-lists-frame .frame-foot .btn,
+  .set-sample > .btn,
+  .set-check-go,
+  .set-check-go .btn {
+    width: 100%;
+  }
+  .set-check-go {
+    align-items: stretch;
+  }
+  .set-check-wait {
+    max-width: none;
+    text-align: start;
+  }
+  .set-check-row {
+    column-gap: var(--s2);
+  }
+  .set-legend {
+    padding-inline: var(--s4);
+  }
+  .set-actions .btn,
+  .set-export > .btn,
+  .set-danger > .btn {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+  .set-form .frame-foot .btn {
+    flex: 1 1 auto;
+  }
+  .set-device {
+    margin-block-start: var(--s8);
+  }
+}
+@media (max-width: 559px) {
+  .set-fields,
+  .set-pay-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .set-pay-add {
+    justify-self: stretch;
+  }
+}
+@media (max-width: 419px) {
+  .set-lang-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .set-lang-option {
+    min-height: 0;
+  }
+  .set-lang-option + .set-lang-option {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--frame);
+  }
+}

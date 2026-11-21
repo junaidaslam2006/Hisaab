@@ -1,0 +1,638 @@
+/* Hisaab shells — public (launch-post site), auth (one column), app (top header + bottom tab bar).
+   Breakpoints: 360 (smallest phone) · 720 (phone → tablet) · 960 (app desktop header) · 1200 (section rail). */
+
+/* Generic page container for pages that are not built on .article */
+.container {
+  width: 100%;
+  max-width: calc(var(--page) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Nav pill: shared by the app header and the public header */
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  color: var(--ink-2);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.nav-pill:hover {
+  background: var(--surface-sunk);
+  color: var(--ink);
+}
+.nav-pill.active,
+.nav-pill[aria-current='page'] {
+  background: var(--ink);
+  color: var(--ink-inverse);
+}
+:where(html[lang='ur']) .nav-pill {
+  font-size: 15px;
+  line-height: 1.8;
+}
+@media (pointer: coarse) {
+  .nav-pill {
+    min-height: 44px;
+  }
+}
+
+/* Dark surfaces: keep focus rings visible */
+.pub-footer :focus-visible,
+.on-dark :focus-visible {
+  outline-color: var(--ink-inverse);
+}
+
+/* =====================================================================
+   App shell (signed in)
+   ===================================================================== */
+.app-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--s4);
+}
+.app-loading > .banner {
+  width: min(100%, 480px);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  border-block-end: 1px solid var(--rule);
+}
+.app-header-inner {
+  height: var(--header-h);
+  padding-inline: var(--s6);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s4);
+}
+/* The brand fills its own track (stretch, not start) so a long shop name ellipsizes inside it
+   instead of running under the nav pills or the status control. */
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-width: 0;
+}
+.app-brand .logo {
+  flex: none;
+}
+.app-brand-rule {
+  flex: none;
+  width: 1px;
+  height: 20px;
+  background: var(--rule-strong);
+}
+.app-shop {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  justify-self: center;
+}
+.app-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  justify-self: end;
+}
+.app-tools > * {
+  flex: none;
+}
+
+/* Account disclosure */
+.account {
+  position: relative;
+}
+.account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding-block: 0;
+  padding-inline: 3px 8px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink);
+}
+.account-btn:hover,
+.account-btn[aria-expanded='true'] {
+  border-color: var(--ink);
+}
+.account-pop {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 8px);
+  inset-inline-end: 0;
+  width: 264px;
+  padding-block-end: var(--s2);
+  background: var(--surface-raised);
+  border: 1px solid var(--frame);
+  box-shadow: var(--shadow-overlay);
+  font-family: var(--f-ui);
+  animation: rise 0.16s var(--ease);
+}
+.account-pop-head {
+  padding: var(--s4);
+  margin-block-end: var(--s2);
+  border-block-end: 1px solid var(--rule);
+}
+.account-pop-name {
+  font-family: var(--f-head);
+  font-size: var(--t-lg);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.account-pop :is(a, button) {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--s4);
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-align: start;
+  text-decoration: none;
+}
+.account-pop :is(a, button):hover {
+  background: var(--paper-2);
+}
+.account-pop .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--ink-2);
+}
+.account-pop-out {
+  margin-block-start: var(--s2);
+  border-block-start: 1px solid var(--rule) !important;
+}
+:where(html[lang='ur']) .account-pop :is(a, button) {
+  font-size: 15px;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: calc(var(--page) + 2 * var(--s6));
+  margin-inline: auto;
+  padding: var(--s7) var(--s6) var(--s9);
+}
+.app-main:focus {
+  outline: none;
+}
+.app-main-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+  min-width: 0;
+}
+
+.tabbar {
+  display: none;
+}
+
+/* Under 1200 the WhatsApp status collapses to its dot (the word stays in the link's label). */
+@media (max-width: 1199px) {
+  .app-header-inner {
+    padding-inline: var(--s5);
+  }
+  .status-word {
+    display: none;
+  }
+  .app-tools .status-pill {
+    justify-content: center;
+    width: 32px;
+    padding: 0;
+  }
+}
+@media (max-width: 1199px) and (pointer: coarse) {
+  .app-tools .status-pill {
+    width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Under 960: compact top bar + bottom tab bar */
+@media (max-width: 959px) {
+  .app-header-inner {
+    height: 56px;
+    padding-inline: var(--s4);
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s3);
+  }
+  .app-nav,
+  .account {
+    display: none;
+  }
+  .app-brand {
+    gap: var(--s2);
+  }
+  .app-brand .logo > :first-child {
+    font-size: 21px;
+  }
+  .app-brand-rule {
+    height: 18px;
+  }
+  .app-main {
+    padding: var(--s5) var(--s4) calc(var(--tabbar-h) + var(--s7) + env(safe-area-inset-bottom));
+  }
+
+  .tabbar {
+    position: fixed;
+    z-index: 50;
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--paper);
+    border-block-start: 1px solid var(--frame);
+  }
+  .tabbar a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+    color: var(--ink-3);
+    font-family: var(--f-ui);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+  .tabbar a > span {
+    max-width: 100%;
+    padding-inline: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tabbar a .icon {
+    width: 22px;
+    height: 22px;
+  }
+  .tabbar a.active {
+    color: var(--ink);
+  }
+  .tabbar a.active::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    inset-inline: 20%;
+    height: 2px;
+    background: var(--ink);
+  }
+  .tabbar a:focus-visible {
+    outline-offset: -4px;
+  }
+  :where(html[lang='ur']) .tabbar a {
+    gap: 0;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+}
+
+/* =====================================================================
+   Public pages
+   ===================================================================== */
+.public {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+.pub-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  border-block-end: 1px solid transparent;
+  transition: border-color var(--dur) var(--ease);
+}
+.pub-header.is-scrolled {
+  border-block-end-color: var(--rule);
+}
+.pub-header-inner {
+  height: var(--header-h);
+  padding-inline: var(--s6);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s4);
+}
+.pub-header-inner > .logo {
+  justify-self: start;
+}
+.pub-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: center;
+}
+.pub-nav .nav-pill {
+  min-height: 32px;
+  padding: 0 14px;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink);
+  font-size: var(--t-xs);
+}
+.pub-nav .nav-pill:hover {
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1px var(--ink-4);
+}
+:where(html[lang='ur']) .pub-nav .nav-pill {
+  font-size: 14px;
+}
+/* Touch tablets (>= 900px still show these pills): the shared 44px rule loses to the 32px above. */
+@media (pointer: coarse) {
+  .pub-nav .nav-pill {
+    min-height: 44px;
+  }
+}
+.pub-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  justify-self: end;
+}
+.pub-menu-btn {
+  display: none;
+}
+
+/* Below 1200 a true centre would let the pills run into the actions: centre them in the space between. */
+@media (max-width: 1199px) {
+  .pub-header-inner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding-inline: var(--s5);
+    gap: var(--s3);
+  }
+  .pub-nav .nav-pill {
+    padding: 0 10px;
+  }
+}
+@media (max-width: 899px) {
+  .pub-header-inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: var(--s4);
+  }
+  .pub-nav,
+  .pub-actions > .lang-switch,
+  .pub-login {
+    display: none;
+  }
+  .pub-menu-btn {
+    display: inline-grid;
+  }
+}
+@media (max-width: 419px) {
+  .pub-header-inner > .logo .logo-rule,
+  .pub-header-inner > .logo > :last-child {
+    display: none;
+  }
+}
+
+.public-main {
+  flex: 1;
+  display: block;
+  min-width: 0;
+}
+.public-main:focus {
+  outline: none;
+}
+
+/* Menu drawer (< 900px) */
+.pub-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--paper);
+  animation: fade 0.16s var(--ease);
+}
+.pub-drawer:focus {
+  outline: none;
+}
+.pub-drawer-head {
+  flex: none;
+  height: var(--header-h);
+  padding-inline: var(--s4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-block-end: 1px solid var(--rule);
+}
+.pub-drawer-nav {
+  padding: var(--s6) var(--s4) 0;
+}
+.pub-drawer-nav li + li {
+  border-block-start: 1px solid var(--rule);
+}
+.pub-drawer-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  min-height: 64px;
+  color: var(--ink);
+  font-family: var(--f-head);
+  font-size: var(--t-xl);
+  line-height: 1.25;
+  text-decoration: none;
+}
+.pub-drawer-nav a .icon {
+  color: var(--ink-3);
+}
+:where(html[lang='ur']) .pub-drawer-nav a {
+  font-size: 21px;
+  line-height: 1.9;
+}
+.pub-drawer-foot {
+  margin-block-start: auto;
+  padding: var(--s7) var(--s4) calc(var(--s6) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s3);
+}
+.pub-drawer-foot .lang-switch {
+  margin-block-end: var(--s2);
+}
+
+/* Dark footer */
+.pub-footer {
+  padding: var(--s8) 0 var(--s6);
+  background: var(--ink);
+  color: var(--ink-inverse);
+  font-family: var(--f-ui);
+}
+.pub-footer-inner {
+  max-width: calc(var(--page) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--s6) var(--s7);
+  align-items: start;
+}
+.pub-footer-logo {
+  justify-self: start;
+}
+.pub-footer-nav ul {
+  border-block-end: 1px solid color-mix(in srgb, var(--ink-inverse) 18%, transparent);
+}
+.pub-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  min-height: 48px;
+  border-block-start: 1px solid color-mix(in srgb, var(--ink-inverse) 18%, transparent);
+  color: color-mix(in srgb, var(--ink-inverse) 80%, transparent);
+  font-size: var(--t-sm);
+  text-decoration: none;
+}
+.pub-footer-row:hover {
+  color: var(--ink-inverse);
+}
+.pub-footer-row .icon {
+  opacity: 0.6;
+}
+.pub-footer-legal {
+  grid-column: 1 / -1;
+  margin-block-start: var(--s7);
+  font-size: var(--t-xs);
+  color: color-mix(in srgb, var(--ink-inverse) 66%, transparent);
+}
+:where(html[lang='ur']) .pub-footer-row {
+  font-size: 15px;
+}
+:where(html[lang='ur']) .pub-footer-legal {
+  font-size: 14px;
+}
+@media (max-width: 719px) {
+  .pub-footer {
+    padding-block-start: var(--s7);
+  }
+  .pub-footer-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pub-footer-legal {
+    margin-block-start: var(--s5);
+  }
+}
+
+/* =====================================================================
+   Auth pages (connect / login / welcome)
+   ===================================================================== */
+.auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+.auth-header {
+  height: var(--header-h);
+  padding-inline: var(--s6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+.auth-main {
+  flex: 1;
+  width: 100%;
+  max-width: calc(560px + 2 * var(--s5));
+  margin-inline: auto;
+  padding: var(--s7) var(--s5) var(--s9);
+}
+.auth-main:focus {
+  outline: none;
+}
+.auth-footer {
+  padding: var(--s5) var(--s4) calc(var(--s6) + env(safe-area-inset-bottom));
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.auth-footer nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--s3);
+}
+.auth-footer a {
+  color: var(--ink-2);
+}
+@media (max-width: 719px) {
+  .auth-header {
+    padding-inline: var(--s4);
+  }
+  .auth-main {
+    padding: var(--s5) var(--s4) var(--s8);
+  }
+}
+
+/* =====================================================================
+   Print: just the page
+   ===================================================================== */
+@media print {
+  .app-header,
+  .tabbar,
+  .pub-header,
+  .pub-footer,
+  .auth-header,
+  .auth-footer,
+  .section-rail,
+  .skip-link,
+  .toasts {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  .app-main {
+    padding: 0;
+  }
+}

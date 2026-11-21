@@ -1,0 +1,191 @@
+/* Privacy + Terms ("/privacy", "/terms"): launch-post article on the .article grid —
+   eyebrow, serif title, lead, "[n] ····· Label" contents, a sage "In short" figure, numbered sections, end matter.
+   Also the 404 page (NotFound.jsx), which lives outside every layout. */
+.legal-page {
+  padding-block: var(--s9);
+}
+
+.legal-head .eyebrow {
+  margin-block-end: var(--s4);
+}
+.legal-head h1 {
+  font-size: clamp(40px, 5.6vw, 64px);
+  line-height: 1.06;
+}
+.legal-head .lead {
+  margin-block-start: var(--s5);
+}
+:where(html[lang='ur']) .legal-head h1 {
+  font-size: clamp(32px, 4.4vw, 50px);
+  line-height: 1.8;
+}
+
+/* Contents in the reference's "[1] ········ Label" form, in ink on the paper. */
+.legal-page > .legal-toc {
+  margin-block-start: var(--s7);
+}
+.legal-page .toc.toc-hero {
+  max-width: 420px;
+  color: var(--ink);
+}
+:where(html[lang='ur']) .legal-page .toc.toc-hero {
+  font-size: 16px;
+}
+
+/* "In short": labelled sage cells, wider than the reading column. */
+.legal-page > .legal-short {
+  margin-block-start: var(--s8);
+}
+.legal-short > .label {
+  margin-block-end: var(--s3);
+}
+.legal-short .cell > .label {
+  color: var(--ink);
+}
+.legal-short .cell-value {
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+:where(html[lang='ur']) .legal-short .cell-value {
+  font-size: 16px;
+  line-height: 2;
+}
+
+/* Numbered sections */
+.legal-page > .legal-section {
+  margin-block-start: var(--s8);
+}
+.legal-section > * + * {
+  margin-block-start: 1em;
+}
+.legal-section > h2 + * {
+  margin-block-start: var(--s4);
+}
+.legal-n {
+  color: var(--ink-3);
+}
+.legal-section > ul {
+  padding-inline-start: 1.25em;
+  list-style: disc;
+}
+.legal-section > ul > li + li {
+  margin-block-start: 0.5em;
+}
+.legal-section > ul > li::marker {
+  color: var(--ink-3);
+}
+
+/* For the owner to fill in before launch. */
+.legal-placeholder {
+  padding: var(--s3) var(--s4);
+  border: 1px dashed var(--ink-4);
+  background: var(--surface-sunk);
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+:where(html[lang='ur']) .legal-placeholder {
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 2;
+}
+
+.legal-page > .endnotes + .endnotes {
+  margin-block-start: var(--s8);
+}
+
+@media (max-width: 719px) {
+  .legal-page {
+    padding-block: var(--s7) var(--s8);
+  }
+  .legal-page > :is(.legal-short, .legal-section) {
+    margin-block-start: var(--s7);
+  }
+}
+
+/* ---------- 404 ---------- */
+.nf-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+.nf-head {
+  height: var(--header-h);
+  padding-inline: var(--s6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+.nf-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: calc(var(--reading) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: var(--s8) var(--gutter) var(--s9);
+}
+.nf-main:focus {
+  outline: none;
+}
+.nf-main > .eyebrow {
+  margin-block-end: var(--s4);
+}
+.nf-main > .lead {
+  margin-block-start: var(--s5);
+}
+.nf-main code {
+  padding: 0.05em 0.35em;
+  background: var(--surface-sunk);
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  overflow-wrap: anywhere;
+  unicode-bidi: isolate;
+}
+.nf-main > .cluster {
+  margin-block-start: var(--s6);
+}
+.nf-foot {
+  display: flex;
+  justify-content: center;
+  gap: var(--s4);
+  padding: var(--s5) var(--s4) calc(var(--s6) + env(safe-area-inset-bottom));
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+}
+.nf-foot a {
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .nf-foot {
+  font-size: 14px;
+}
+/* Touch screens: 44px tap targets; the padding takes over the gap, so the words stay as far apart. */
+@media (pointer: coarse) {
+  .nf-foot {
+    gap: 0;
+    padding-block-start: var(--s3);
+  }
+  .nf-foot a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--s2);
+  }
+}
+@media (max-width: 719px) {
+  .nf-head {
+    padding-inline: var(--s4);
+  }
+  .nf-main {
+    padding-block: var(--s7) var(--s8);
+  }
+  .nf-main > .cluster .btn {
+    flex: 1 1 auto;
+  }
+}

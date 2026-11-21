@@ -1,0 +1,555 @@
+/* Hisaab base — element defaults and type roles for the "launch post" system. See web/DESIGN.md + web/COMPONENTS.md.
+   Font roles are variables so Urdu (RTL, Nastaliq) and Latin islands switch in one place:
+     --f-head  headlines, leads, reading text  (serif  | Nastaliq)
+     --f-ui    buttons, labels, tables, forms   (sans   | Nastaliq) */
+
+:root {
+  --f-head: var(--font-serif);
+  --f-ui: var(--font-sans);
+  --gutter: var(--s6);
+}
+html[lang='ur'] {
+  --f-head: var(--font-urdu);
+  --f-ui: var(--font-urdu);
+}
+@media (max-width: 719px) {
+  :root {
+    --gutter: var(--s4);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--f-ui);
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  overflow-wrap: break-word;
+}
+
+/* Section anchors land below the sticky header. */
+[id] {
+  scroll-margin-top: calc(var(--header-h) + var(--s5));
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+ul,
+ol,
+dl,
+dd,
+figure,
+blockquote {
+  margin: 0;
+}
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- headings (type roles) ---------- */
+h1,
+.page-title {
+  font-family: var(--f-head);
+  font-weight: 400;
+  font-size: clamp(34px, 4.6vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+h2,
+.h2 {
+  font-family: var(--f-head);
+  font-weight: 400;
+  font-size: var(--t-3xl);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+h3,
+.h3 {
+  font-family: var(--f-head);
+  font-weight: 500;
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+h4,
+.h4 {
+  font-family: var(--f-ui);
+  font-weight: 600;
+  font-size: var(--t-md);
+  line-height: 1.4;
+}
+@media (max-width: 719px) {
+  h2,
+  .h2 {
+    font-size: var(--t-2xl);
+  }
+  h3,
+  .h3 {
+    font-size: 20px;
+  }
+}
+
+/* Hero title — the painted-sky headline. Wrap lines in <span> to stagger them like the reference. */
+.hero-title {
+  font-family: var(--f-head);
+  font-weight: 400;
+  font-size: clamp(44px, 6vw, var(--t-6xl));
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.hero-title > span {
+  display: block;
+}
+.hero-title > span + span {
+  padding-inline-start: 1.15em;
+}
+@media (max-width: 719px) {
+  .hero-title > span + span {
+    padding-inline-start: 0.6em;
+  }
+}
+
+/* ---------- text roles ---------- */
+.lead {
+  font-family: var(--f-head);
+  font-weight: 400;
+  font-size: clamp(21px, 2.4vw, var(--t-2xl));
+  line-height: 1.3;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.eyebrow {
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+.label {
+  font-family: var(--f-ui);
+  font-size: var(--t-2xs);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.caption {
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+  text-wrap: pretty;
+}
+
+.meta {
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+/* Serif reading text outside .prose (a single paragraph in an app section). */
+.body-serif {
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+}
+
+/* ---------- reading column ---------- */
+.prose {
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  max-width: var(--reading);
+  text-wrap: pretty;
+}
+.prose.article {
+  max-width: none;
+}
+:is(.prose, .article) > * + * {
+  margin-block-start: 1em;
+}
+:is(.prose, .article) > :is(h2, .h2) {
+  margin-block-start: var(--s8);
+}
+:is(.prose, .article) > :is(h3, .h3) {
+  margin-block-start: var(--s6);
+}
+:is(.prose, .article) > :is(h2, .h2, h3, .h3) + * {
+  margin-block-start: var(--s4);
+}
+:is(.prose, .article) > :is(.figure, .frame, .tabs-block, .quote-card, .grid-table, .grid-table-wrap, .cells, .panel) {
+  margin-block-start: var(--s7);
+}
+:is(.prose, .article) > :is(.figure, .frame, .tabs-block, .quote-card, .grid-table, .grid-table-wrap, .cells, .panel) + * {
+  margin-block-start: var(--s7);
+}
+:is(.prose, .article) > :is(.endnotes) {
+  margin-block-start: var(--s9);
+}
+.prose strong,
+.prose b {
+  font-weight: 600;
+}
+:is(.prose, .article) > :is(ul, ol) {
+  padding-inline-start: 1.25em;
+}
+:is(.prose, .article) > ul {
+  list-style: disc;
+}
+:is(.prose, .article) > ol {
+  list-style: decimal;
+}
+:is(.prose, .article) > :is(ul, ol) > li + li {
+  margin-block-start: 0.4em;
+}
+:is(.prose, .article) > :is(ul, ol) > li::marker {
+  color: var(--ink-3);
+}
+:is(.prose, .article) > p code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-sunk);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+/* Launch-post page grid: reading column centred, .wide children up to --wide, .full children edge to edge.
+   <article class="article prose"> … <figure class="figure wide">…</figure> … </article> */
+.article {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--gutter), 1fr)
+    [wide-start] minmax(0, calc((var(--wide) - var(--reading)) / 2))
+    [reading-start] min(var(--reading), 100% - var(--gutter) * 2)
+    [reading-end] minmax(0, calc((var(--wide) - var(--reading)) / 2))
+    [wide-end] minmax(var(--gutter), 1fr)
+    [full-end];
+}
+.article.flush {
+  --gutter: 0px;
+}
+.article > * {
+  grid-column: reading;
+  min-width: 0;
+}
+.article > .wide {
+  grid-column: wide;
+}
+.article > .full {
+  grid-column: full;
+}
+
+/* Widths outside the article grid. */
+.measure {
+  max-width: var(--reading);
+}
+.measure-wide {
+  max-width: var(--wide);
+}
+.center {
+  margin-inline: auto;
+}
+
+/* ---------- links ---------- */
+a {
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ink-4);
+  transition: text-decoration-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ---------- form element resets ---------- */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+hr {
+  border: 0;
+  border-block-start: 1px solid var(--rule);
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}
+
+sup {
+  line-height: 0;
+}
+
+/* ---------- focus, selection ---------- */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--sage);
+  color: var(--ink);
+}
+
+/* ---------- numbers ---------- */
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+/* ---------- colour utilities (always pair with a word or sign) ---------- */
+.muted {
+  color: var(--ink-3);
+}
+.ink-2 {
+  color: var(--ink-2);
+}
+.owed {
+  color: var(--owed);
+}
+.paid {
+  color: var(--paid);
+}
+.warn {
+  color: var(--warn);
+}
+.on-dark {
+  color: var(--ink-inverse);
+}
+
+/* ---------- Urdu ----------
+   html[lang=ur] switches the whole UI; .ur / [lang=ur] mark an Urdu island inside English;
+   .latin / [lang=en] mark a Latin island (Roman Urdu text, phone numbers) inside the Urdu UI. */
+.ur,
+[lang='ur'] {
+  --f-head: var(--font-urdu);
+  --f-ui: var(--font-urdu);
+  font-family: var(--font-urdu);
+}
+.ur {
+  direction: rtl;
+  unicode-bidi: isolate;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(.latin, [lang='en']) {
+  --f-head: var(--font-serif);
+  --f-ui: var(--font-sans);
+  font-family: var(--font-sans);
+}
+html[lang='ur'] body {
+  line-height: 2;
+}
+/* Arabic script must never be letter-spaced: it breaks the joins. Latin islands in the Urdu UI keep their own
+   spacing (pairing code, 6-digit login code, phone numbers): .num, .latin / lang=en, dir=ltr, inputs, code, .mono.
+   Anything set in var(--font-mono) should carry .mono (or be a code/kbd/samp element). */
+html[lang='ur'] :not(.num, .num *, .latin, .latin *, [lang='en'], [lang='en'] *, [dir='ltr'], [dir='ltr'] *, input, textarea, code, code *, kbd, kbd *, samp, samp *, .mono, .mono *),
+.ur,
+.ur *,
+.ps,
+.ps *,
+:lang(ps) {
+  letter-spacing: 0 !important;
+}
+:where(html[lang='ur']) :is(.num, input, textarea, select) {
+  font-family: var(--font-sans);
+}
+:where(html[lang='ur']) :is(code, kbd, samp, .mono) {
+  font-family: var(--font-mono);
+}
+
+/* Pashto island (ځ ۍ ې ښ ږ ټ ډ ړ ګ ڼ): Naskh, which has every Pashto letter; Nastaliq may not.
+   <span className="ps" lang="ps">…</span> — .ps also sets RTL + isolation; lang="ps" alone only switches the font. */
+.ps,
+:lang(ps) {
+  --f-head: var(--font-naskh);
+  --f-ui: var(--font-naskh);
+  font-family: var(--font-naskh);
+}
+.ps,
+[lang|='ps'] {
+  line-height: 1.8;
+}
+.ps {
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+:where(html[lang='ur']) :is(h1, .page-title) {
+  font-weight: 500;
+  font-size: clamp(28px, 3.7vw, 42px);
+  line-height: 1.8;
+}
+:where(html[lang='ur']) .hero-title {
+  font-weight: 500;
+  font-size: clamp(36px, 4.8vw, 58px);
+  line-height: 1.7;
+}
+:where(html[lang='ur']) :is(h2, .h2) {
+  font-size: 26px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(h3, .h3) {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) :is(h4, .h4) {
+  font-size: 16px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .lead {
+  font-size: clamp(19px, 2vw, 23px);
+  line-height: 2;
+}
+:where(html[lang='ur']) :is(.prose, .body-serif) {
+  font-size: var(--t-body);
+  line-height: 2.1;
+}
+:where(html[lang='ur']) .eyebrow {
+  font-size: 15px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .label {
+  font-size: 13px;
+  text-transform: none;
+  line-height: 1.8;
+}
+:where(html[lang='ur']) :is(.caption, .meta) {
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* ---------- accessibility helpers ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* A table box ignores width and overflow (it grows to fit its cells), so a hidden data table would still
+   widen the page on phones. As a block it is clipped like everything else. Preferred markup is still
+   <div className="sr-only"><table>…</table></div>. */
+table.sr-only {
+  display: block;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 300;
+  inset-inline-start: var(--s4);
+  top: var(--s2);
+  padding: var(--s2) var(--s4);
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: var(--ink-inverse);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+  color: var(--ink-inverse);
+}
+
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 520px) {
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

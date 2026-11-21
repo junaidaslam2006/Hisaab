@@ -1,0 +1,534 @@
+/* ================= Customers (.cust-page) =================
+   Launch-post list: serif header, pill tools, an ink grid table with the balance column in sage,
+   a centred caption and a footnote. Under 720px the table becomes one framed list with a sage amount column. */
+
+.cust-page {
+  /* Rust and olive darkened just enough to keep 4.5:1 on the sage highlight. */
+  --owed-on-sage: color-mix(in srgb, var(--owed) 80%, var(--ink));
+  --paid-on-sage: color-mix(in srgb, var(--paid) 80%, var(--ink));
+  min-width: 0;
+}
+
+.cust-lead-amt {
+  white-space: nowrap;
+}
+.cust-lead-amt.owed {
+  color: var(--owed);
+}
+.cust-lead-amt.payable {
+  color: var(--lst-payable);
+}
+:where(html[lang='ur']) .cust-lead-amt {
+  font-family: var(--font-serif);
+}
+
+/* ---------- tools: pill search · pill filters · pill sort ---------- */
+.cust-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'search sort'
+    'filter filter';
+  align-items: center;
+  gap: var(--s3) var(--s4);
+  margin-block-end: var(--s5);
+}
+.cust-search {
+  grid-area: search;
+}
+.cust-filter {
+  grid-area: filter;
+  justify-self: start;
+}
+.cust-sort {
+  grid-area: sort;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .cust-tools {
+    grid-template-columns: minmax(200px, 300px) auto minmax(0, 1fr) auto;
+    grid-template-areas: 'search filter . sort';
+  }
+}
+
+/* ink-2, not ink-3: 12px text on the --surface-sunk track needs it for 4.5:1. */
+.cust-count {
+  margin-inline-start: 2px;
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+.cust-sort-label {
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.cust-sort .select {
+  width: auto;
+  max-width: 100%;
+  min-height: 44px;
+  padding-inline: 18px 40px;
+  border-color: transparent;
+  border-radius: var(--r-pill);
+  background-color: var(--surface-sunk);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+.cust-sort .select:hover {
+  border-color: transparent;
+  background-color: var(--rule);
+}
+:where(html[lang='ur']) .cust-sort .select {
+  font-size: 15px;
+}
+:where(html[lang='ur']) .cust-sort-label {
+  font-size: 15px;
+}
+
+/* Phones: search, then the filter pills, then sort — each gets the full width it needs. */
+@media (max-width: 719px) {
+  .cust-tools {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'search'
+      'filter'
+      'sort';
+    gap: var(--s3);
+    margin-block-end: var(--s4);
+  }
+  .cust-sort {
+    justify-self: start;
+    max-width: 100%;
+  }
+  /* Four short pills fit on one line at 360px once the counts step aside (the lead and caption carry them). */
+  .cust-filter {
+    justify-self: stretch;
+  }
+  .cust-filter button {
+    flex: 1 1 auto;
+    padding-inline: 10px;
+  }
+  .cust-count {
+    display: none;
+  }
+}
+
+/* ---------- desktop table (shared .grid-table) ---------- */
+.cust-table th[scope='row'] {
+  font-weight: 400;
+}
+.cust-table .cust-col,
+.cust-table .cust-col-bal {
+  width: 18%;
+}
+.cust-table td {
+  white-space: nowrap;
+}
+.cust-who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--s2);
+}
+.cust-name {
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.cust-name:hover {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+.cust-alt {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+.cust-alt.ur {
+  font-size: 15px;
+  line-height: 1.7;
+}
+:where(html[lang='ur']) .cust-alt.latin,
+:where(html[lang='ur']) .cust-name.latin {
+  line-height: 1.6;
+}
+.cust-word {
+  display: block;
+  margin-block-start: 2px;
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cust-word.owed {
+  color: var(--owed);
+}
+.cust-word.paid {
+  color: var(--paid);
+}
+.cust-word.payable {
+  color: var(--lst-payable);
+}
+.cust-page :is(.hl, .cust-row-amt) :is(.money, .cust-word).owed {
+  color: var(--owed-on-sage);
+}
+.cust-page :is(.hl, .cust-row-amt) :is(.money, .cust-word).paid {
+  color: var(--paid-on-sage);
+}
+:where(html[lang='ur']) .cust-word {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.cust-late {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--warn);
+  font-weight: 600;
+}
+.cust-none {
+  color: var(--ink-3);
+}
+.cust-table .cust-go {
+  width: 52px;
+  padding-inline: 0;
+  vertical-align: middle;
+  text-align: center;
+  color: var(--ink-3);
+}
+.cust-table .cust-go .icon {
+  margin-inline: auto;
+}
+.cust-table tbody tr:hover .cust-go {
+  color: var(--ink);
+}
+
+/* ---------- phone list: one frame, rows with a sage amount column ---------- */
+.cust-rows {
+  border: 1px solid var(--frame);
+  background: var(--surface);
+}
+.cust-rows > li + li {
+  border-block-start: 1px solid color-mix(in srgb, var(--frame) 16%, transparent);
+}
+.cust-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  min-height: 68px;
+  color: inherit;
+  text-decoration: none;
+}
+.cust-row-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--s3) var(--s4);
+  transition: background-color var(--dur) var(--ease);
+}
+.cust-row:hover .cust-row-main {
+  background: var(--paper-2);
+}
+.cust-row:focus-visible {
+  outline-offset: -2px;
+}
+.cust-row-name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  min-width: 0;
+  font-family: var(--f-ui);
+  font-size: 15px;
+  font-weight: 600;
+}
+.cust-row-name > bdi,
+.cust-row-alt {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cust-row-name > bdi {
+  flex: 0 1 auto;
+}
+/* The other spelling is secondary: it gives up its space before the main name does. */
+.cust-row-alt {
+  flex: 0 100 auto;
+  font-size: var(--t-sm);
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.cust-row-meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.cust-row-meta .icon {
+  margin-block-start: 2px;
+}
+.cust-row-meta .num {
+  white-space: nowrap;
+}
+.cust-row-meta.is-late {
+  color: var(--warn);
+}
+.cust-row-amt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--s3);
+  border-inline-start: 1px solid var(--frame);
+  background: var(--sage);
+  text-align: end;
+}
+:where(html[lang='ur']) .cust-row-name {
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .cust-row-meta {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ---------- caption + footnote ---------- */
+.cust-caption {
+  margin-block-start: var(--s4);
+}
+.cust-notes {
+  max-width: var(--reading);
+  margin-block-start: var(--s9);
+}
+
+/* ---------- nothing matches ---------- */
+.cust-nomatch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s4);
+  padding: var(--s7) var(--s6);
+  border: 1px solid var(--frame);
+}
+.cust-nomatch-title {
+  font-family: var(--f-head);
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+.cust-nomatch-text {
+  max-width: var(--reading);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.cust-say {
+  font-weight: 600;
+  color: var(--ink);
+}
+:where(html[lang='ur']) .cust-nomatch-title {
+  font-size: 20px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .cust-nomatch-text {
+  line-height: 2.1;
+}
+@media (max-width: 719px) {
+  .cust-nomatch {
+    padding: var(--s6) var(--s4);
+  }
+}
+
+/* ---------- first visit: the sentence to say ---------- */
+.cust-empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+  max-width: var(--reading);
+}
+.cust-empty .quote-text {
+  font-size: var(--t-2xl);
+  line-height: 1.3;
+}
+:where(html[lang='ur']) .cust-empty .quote-text {
+  font-size: 24px;
+  line-height: 2;
+}
+.cust-empty-text {
+  color: var(--ink-2);
+}
+
+/* ---------- loading ---------- */
+.cust-skel-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s4);
+  margin-block-end: var(--s5);
+}
+.cust-skel-tools > * {
+  max-width: 100%;
+}
+.cust-skel-frame {
+  border: 1px solid var(--frame);
+}
+.cust-skel-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  min-height: 68px;
+}
+.cust-skel-row + .cust-skel-row {
+  border-block-start: 1px solid var(--frame);
+}
+.cust-skel-main {
+  padding: var(--s4);
+}
+.cust-skel-amt {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--s4);
+  border-inline-start: 1px solid var(--frame);
+  background: var(--sage);
+}
+@media (max-width: 719px) {
+  .cust-skel-row {
+    grid-template-columns: minmax(0, 1fr) 120px;
+  }
+}
+
+/* ---------- add customer sheet ---------- */
+.cust-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.cust-form input.cust-ur-input {
+  font-family: var(--font-urdu);
+  line-height: 1.9;
+  padding-block: 4px;
+}
+.cust-exists {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+/* ---------- list tabs: All · General · each list (count; suppliers lists marked) ---------- */
+.cust-tabs-block {
+  min-width: 0;
+}
+.cust-tabs {
+  margin-block-end: var(--s5);
+}
+.cust-tabs .tab {
+  display: inline-flex;
+  align-items: baseline;
+}
+.cust-tab-kind {
+  margin-inline-start: 6px;
+  color: var(--lst-payable);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+:where(html[lang='ur']) .cust-tab-kind {
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.cust-panel:focus-visible {
+  outline-offset: 4px;
+}
+@media (max-width: 719px) {
+  .cust-tabs {
+    margin-block-end: var(--s4);
+  }
+}
+
+/* ---------- list chip + sample badge beside a name ---------- */
+.cust-who .lst-sample {
+  align-self: center;
+}
+/* Beats the shared .grid-table .sub (display: block) so the chip and the phone get their gap. */
+.cust-page .cust-table .sub.cust-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s2);
+  margin-block-start: 4px;
+}
+.cust-row-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s2);
+  min-width: 0;
+  margin-block: 2px;
+}
+/* On the sage amount column a supplier's "you owe" keeps its own colour (4.9:1 on sage). */
+.cust-page :is(.hl, .cust-row-amt) :is(.money, .cust-word).payable {
+  color: var(--lst-payable);
+}
+
+/* ---------- list sheets ---------- */
+.cust-inline-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.cust-danger {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s3);
+  margin-block-start: var(--s2);
+  padding-block-start: var(--s5);
+  border-block-start: 1px solid var(--rule);
+}
+.cust-danger-title {
+  font-family: var(--f-ui);
+  font-size: var(--t-md);
+  font-weight: 600;
+}
+.cust-danger-text {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+.cust-danger-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  align-self: stretch;
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--owed);
+  background: var(--owed-tint);
+}
+.cust-danger-ask {
+  font-weight: 600;
+}
+:where(html[lang='ur']) .cust-danger-title {
+  font-size: 17px;
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .cust-danger-text {
+  font-size: 15px;
+  line-height: 1.9;
+}

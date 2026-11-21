@@ -1,0 +1,905 @@
+/* Landing (route "/") — "Introducing Hisaab", laid out as a launch post.
+   Painted-sky hero, then one reading column (.article grid). Each section is a subgrid of that article grid, so
+   its paragraphs keep to the 640px reading column while figures step out to the 840px wide column.
+   Everything is scoped under .launch. */
+
+.launch {
+  overflow-x: clip;
+}
+
+/* =====================================================================
+   Hero
+   ===================================================================== */
+.launch-hero {
+  --hero-shade: color-mix(in srgb, var(--sky-night) 45%, transparent);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: calc(100vh - var(--header-h));
+  height: calc(100svh - var(--header-h));
+  min-height: 560px;
+  max-height: 960px;
+  overflow: hidden;
+  color: var(--ink-inverse);
+}
+.launch-hero[data-text='dark'] {
+  color: var(--ink);
+}
+
+.launch-hero-body {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: var(--s7) var(--gutter) var(--s5);
+  text-align: center;
+}
+/* Day: ivory on mid-blue is low-contrast, so the whole middle of the sky deepens in one wide, soft pool (no patches
+   that read as smudges), and the small ivory text carries a close, soft shadow of the same deep blue. */
+.launch-hero[data-look='day'] .launch-hero-body::before {
+  content: '';
+  position: absolute;
+  inset: -4% -6%;
+  z-index: -1;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--sky-night) 44%, transparent) 0%,
+    color-mix(in srgb, var(--sky-night) 34%, transparent) 45%,
+    color-mix(in srgb, var(--sky-night) 14%, transparent) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+.launch-hero[data-look='day'] :is(.launch-eyebrow, .launch-toc, .launch-made) {
+  text-shadow:
+    0 0 10px var(--hero-shade),
+    0 0 3px color-mix(in srgb, var(--sky-night) 55%, transparent),
+    0 1px 1px color-mix(in srgb, var(--sky-night) 40%, transparent);
+}
+.launch-hero[data-look='day'] .launch-title {
+  text-shadow: 0 2px 28px color-mix(in srgb, var(--sky-night) 28%, transparent);
+}
+/* The look dots sit on open sky, where an ivory ring is too faint: ink there. (The contents links keep the ivory
+   ring, which lands on their deeper patch.) */
+.launch-hero[data-look='day'] .launch-look:focus-visible {
+  outline-color: var(--focus);
+}
+
+.launch-hero .launch-eyebrow {
+  margin-block-end: var(--s5);
+  color: inherit;
+}
+.launch-title {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  text-align: start;
+}
+.launch-hero .launch-toc {
+  margin-block-start: clamp(var(--s6), 7vh, var(--s8));
+  margin-inline: auto;
+}
+.launch-hero[data-text='dark'] .toc.launch-toc {
+  color: var(--ink);
+}
+
+/* Look dots (start) and the credit line (end), on the bottom edge of the sky. */
+.launch-hero-foot {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: var(--s3) var(--s5) var(--s4);
+}
+.launch-hero[data-look='day'] .launch-hero-foot::before {
+  content: '';
+  position: absolute;
+  /* Full hero width even when the foot has side margins (phones); the hero clips the overflow. */
+  inset: calc(var(--s8) * -1) -50vw 0;
+  z-index: -1;
+  background: linear-gradient(to top, color-mix(in srgb, var(--sky-night) 24%, transparent), transparent);
+  pointer-events: none;
+}
+.launch-looks {
+  display: flex;
+  align-items: center;
+  margin-inline-start: -9px;
+}
+.launch-look {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+}
+.launch-look:focus-visible {
+  outline-offset: -2px;
+}
+.launch-look-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 60%, transparent);
+  outline: 1.5px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--dur) var(--ease);
+}
+.launch-look:hover .launch-look-dot {
+  outline-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+.launch-look[aria-pressed='true'] .launch-look-dot {
+  outline-color: currentColor;
+}
+.launch-made {
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  line-height: 1.4;
+}
+:where(html[lang='ur']) .launch-made {
+  font-size: 14px;
+  line-height: 1.9;
+}
+@media (pointer: coarse) {
+  .launch-look {
+    width: 44px;
+    height: 44px;
+  }
+  .launch-looks {
+    margin-inline-start: -15px;
+  }
+}
+@media (max-width: 719px) {
+  .launch-hero-body {
+    padding-block: var(--s6) var(--s4);
+  }
+  .launch-title {
+    font-size: clamp(36px, 10.4vw, 44px);
+  }
+  :where(html[lang='ur']) .launch-title {
+    font-size: clamp(30px, 8.6vw, 38px);
+  }
+  .launch-hero-foot {
+    margin-inline: var(--s4);
+    padding: var(--s2) 0 var(--s3);
+    border-block-start: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+  }
+}
+
+/* =====================================================================
+   Article: sections on a subgrid of the .article grid
+   ===================================================================== */
+.launch-article {
+  padding-block: var(--s9) var(--s10);
+}
+.launch-article > .launch-section {
+  grid-column: full;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+.launch-section > * {
+  grid-column: reading;
+  min-width: 0;
+}
+.launch-section > .wide {
+  grid-column: wide;
+}
+.launch-article > .launch-section + .launch-section {
+  margin-block-start: var(--s9);
+}
+
+/* Rhythm inside a section: paragraphs a line apart, figures and lists set off by more air. */
+.launch-section > * + * {
+  margin-block-start: var(--s5);
+}
+.launch-section > h2 + * {
+  margin-block-start: var(--s5);
+}
+.launch-section > h3 {
+  margin-block-start: var(--s8);
+}
+.launch-section > h3 + * {
+  margin-block-start: var(--s4);
+}
+.launch-section > :is(.figure, .launch-quotes, .grid-table-wrap) {
+  margin-block-start: var(--s7);
+}
+.launch-section > :is(.figure, .launch-quotes, .grid-table-wrap) + :not(h3) {
+  margin-block-start: var(--s7);
+}
+.launch-section > .figure + .figure {
+  margin-block-start: var(--s8);
+}
+
+@media (max-width: 719px) {
+  .launch-article {
+    padding-block: var(--s8) var(--s9);
+  }
+  .launch-article > .launch-section + .launch-section {
+    margin-block-start: var(--s8);
+  }
+  .launch-section > h3 {
+    margin-block-start: var(--s7);
+  }
+}
+
+/* Script islands keep their own direction but sit on the page's start edge: an Urdu line in the English page
+   aligns to its end (the left), a Roman line in the Urdu page aligns to its end (the right). */
+:is(.launch-said-script, .launch-spoken, .launch-quote-script) {
+  text-align: end;
+}
+[dir='rtl'] :is(.launch-said-script, .launch-spoken, .launch-quote-script) {
+  text-align: start;
+}
+[dir='rtl'] :is(.launch-said-roman, .launch-quote-roman, .launch-say > dt.latin) {
+  text-align: end;
+}
+
+/* ---------- 1. Introduction ---------- */
+.launch-intro > .lead {
+  margin-block-start: 0;
+}
+.launch-intro > .lead + p {
+  margin-block-start: var(--s7);
+}
+.launch-section > .launch-cta {
+  margin-block-start: var(--s6);
+}
+
+/* ---------- 2. How it works ---------- */
+.launch-steps {
+  display: grid;
+  gap: var(--s3);
+}
+.launch-steps > li {
+  display: grid;
+  grid-template-columns: 2.4em minmax(0, 1fr);
+  align-items: baseline;
+}
+.launch-step-n {
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/* Worked example: self-chat | khata, split by an ink hairline. */
+.launch-how-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.launch-col {
+  min-width: 0;
+  padding: var(--s5);
+}
+.launch-col + .launch-col {
+  border-inline-start: 1px solid var(--frame);
+}
+.launch-col-label {
+  display: block;
+  margin-block-end: var(--s4);
+}
+.launch-msg + .launch-msg {
+  margin-block-start: var(--s5);
+  padding-block-start: var(--s5);
+  border-block-start: 1px solid var(--rule);
+}
+.launch-msg-meta {
+  display: block;
+  margin-block-end: var(--s2);
+  color: var(--ink-2);
+}
+
+/* A still voice note: play mark, waveform, length. */
+.launch-vn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 4px 14px 4px 4px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunk);
+  direction: ltr;
+}
+.launch-vn.reply {
+  background: var(--sage);
+}
+.launch-vn-play {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ink-inverse);
+}
+.launch-vn-play .icon {
+  width: 11px;
+  height: 11px;
+}
+.launch-vn-wave {
+  flex: 0 1 112px;
+  min-width: 56px;
+  height: 18px;
+  fill: var(--ink-3);
+}
+.launch-vn.reply .launch-vn-wave {
+  fill: color-mix(in srgb, var(--ink) 55%, var(--sage-ink));
+}
+.launch-vn-time {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.launch-said {
+  margin-block-start: var(--s2);
+}
+.launch-said-script,
+.launch-spoken {
+  display: block;
+}
+.launch-said-script {
+  font-size: 20px;
+  line-height: 2;
+  color: var(--ink);
+}
+.launch-said-roman {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.launch-typed {
+  display: inline-block;
+  max-width: 100%;
+  padding: var(--s2) var(--s3);
+  background: var(--surface-sunk);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.launch-reply {
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--frame);
+  background: var(--sage);
+}
+.launch-spoken + .launch-reply {
+  margin-block-start: var(--s3);
+}
+.launch-spoken {
+  margin-block-start: var(--s2);
+  font-size: 15px;
+  line-height: 2;
+  color: var(--ink-2);
+}
+
+/* The khata side: a small ink grid. */
+.launch-mini :is(th, td) {
+  padding: 10px 12px;
+}
+.launch-mini thead th {
+  white-space: normal;
+}
+.launch-mini tr.is-void .money {
+  color: var(--ink-3);
+}
+.launch-none {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+.launch-col-note {
+  margin-block-start: var(--s3);
+  font-family: var(--f-ui);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .launch-col-note {
+  font-size: 14px;
+  line-height: 1.9;
+}
+@media (max-width: 719px) {
+  .launch-how-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .launch-col {
+    padding: var(--s4);
+  }
+  .launch-col + .launch-col {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--frame);
+  }
+}
+
+/* "From voice note to reply": one row per step; the time axis runs left to right in both languages, like every
+   chart in the app, so the track is direction: ltr and its logical sides are its physical ones. */
+.launch-tl-rows > li,
+.launch-tl-axis {
+  display: grid;
+  grid-template-columns: minmax(0, 12.5rem) minmax(0, 1fr);
+  column-gap: var(--s5);
+  align-items: center;
+}
+.launch-tl-rows > li {
+  min-height: 48px;
+}
+.launch-tl-label {
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  line-height: 1.35;
+}
+.launch-tl-when {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.launch-tl-track,
+.launch-tl-ticks {
+  position: relative;
+  direction: ltr;
+}
+.launch-tl-track {
+  align-self: stretch;
+  min-height: 44px;
+  background-image: linear-gradient(to right, var(--rule) 1px, transparent 1px);
+  /* one gridline per second on the 0–12 s axis */
+  background-size: calc(100% / 12) 100%;
+  border-inline-end: 1px solid var(--rule);
+}
+.launch-tl-seg {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: calc(var(--p) * 100%);
+  width: calc((var(--t) - var(--p)) * 100%);
+  height: 1.5px;
+  margin-block-start: -0.75px;
+  background: var(--sage-ink);
+}
+.launch-tl-dot {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: calc(var(--t) * 100%);
+  width: 11px;
+  height: 11px;
+  margin-block-start: -5.5px;
+  margin-inline-start: -5.5px;
+  border: 1px solid var(--sage-ink);
+  border-radius: 50%;
+  background: var(--sage);
+}
+.launch-tl-rows > li:first-child .launch-tl-dot {
+  border-color: var(--ink-3);
+  background: var(--surface-sunk);
+}
+.launch-tl-axis {
+  margin-block-start: var(--s1);
+}
+.launch-tl-ticks {
+  height: 24px;
+  border-block-start: 1px solid var(--ink-4);
+}
+.launch-tl-tick {
+  position: absolute;
+  top: 5px;
+  inset-inline-start: calc(var(--t) * 100%);
+  display: flex;
+  justify-content: center;
+  width: 0;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--ink-3);
+}
+.launch-tl-tick:last-child {
+  justify-content: flex-end;
+}
+:where(html[lang='ur']) .launch-tl-tick > span {
+  font-family: var(--font-urdu);
+  font-size: 12px;
+  line-height: 1.6;
+}
+:where(html[lang='ur']) .launch-tl-label {
+  font-size: 15px;
+  line-height: 1.8;
+}
+:where(html[lang='ur']) .launch-tl-when {
+  font-size: 14px;
+}
+@media (max-width: 719px) {
+  .launch-tl-rows > li,
+  .launch-tl-axis {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .launch-tl-rows > li {
+    min-height: 0;
+    padding-block-start: var(--s2);
+  }
+  .launch-tl-when {
+    display: inline;
+  }
+  .launch-tl-when::before {
+    content: '·';
+    margin-inline: 0.45em;
+  }
+  .launch-tl-track {
+    min-height: 28px;
+  }
+  .launch-tl-axis > :first-child {
+    display: none;
+  }
+}
+
+/* Comparison table: the Hisaab column is the sage one. */
+.launch-compare thead th {
+  font-size: var(--t-sm);
+}
+@media (min-width: 720px) {
+  .launch-compare tbody th {
+    width: 25%;
+  }
+}
+.launch-compare td.hl {
+  font-weight: 500;
+}
+/* Stacked into cards on phones: the table becomes a column so its caption can stay full width, below the cards. */
+@media (max-width: 719px) {
+  .launch-compare > .grid-table.stack-sm {
+    display: flex;
+    flex-direction: column;
+  }
+  .launch-compare caption {
+    display: block;
+    order: 1;
+  }
+}
+
+/* Example and language tabs: on a phone the English labels are wider than the column, so they wrap instead of
+   hiding the last tab behind the scroll edge. */
+@media (max-width: 719px) {
+  .launch .tabs {
+    flex-wrap: wrap;
+    row-gap: var(--s1);
+    overflow: visible;
+  }
+}
+
+/* ---------- 3. What it understands ---------- */
+/* Quote cards run from the wide column's start to the page edge, so the next card peeks in, faded. */
+.launch-section > .launch-quotes {
+  grid-column: wide-start / full-end;
+}
+.launch-quotes {
+  --card: min(720px, calc(100% - var(--gutter)));
+  overflow: hidden;
+  margin-block: calc(var(--s1) * -1);
+  margin-inline-start: calc(var(--s1) * -1);
+  padding-block: var(--s1);
+  padding-inline-start: var(--s1);
+}
+.launch-quotes > .tabs {
+  max-width: var(--card);
+}
+.launch-quote-track {
+  display: flex;
+  align-items: stretch;
+  gap: var(--s5);
+}
+.launch-quote-track:focus-visible {
+  outline: none;
+}
+.launch-quote-track:focus-visible .is-active > .quote-card {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.launch-quote-slide {
+  --dir: -1;
+  display: flex;
+  flex: 0 0 var(--card);
+  min-width: 0;
+  opacity: 0.35;
+  transform: translateX(calc(var(--i) * (100% + var(--s5)) * var(--dir)));
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+[dir='rtl'] .launch-quote-slide {
+  --dir: 1;
+}
+.launch-quote-slide.is-active {
+  opacity: 1;
+}
+.launch-quote-slide > .quote-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.launch-quote-slide .quote-card-body {
+  flex: 1;
+}
+.launch-quote-script,
+.launch-quote-roman {
+  display: block;
+}
+.launch-quote-script {
+  font-size: 24px;
+  line-height: 2;
+}
+/* Pashto is set in Naskh by the shared .ps class; Naskh needs a touch less size and line height than Nastaliq. */
+.launch-quote-script.ps {
+  font-size: 23px;
+  line-height: 1.85;
+}
+.launch-quote-roman {
+  font-family: var(--font-serif);
+  font-size: var(--t-xl);
+  line-height: 1.4;
+}
+.launch-quote-roman.is-second {
+  margin-block-start: var(--s1);
+  font-size: var(--t-md);
+  font-style: italic;
+  color: var(--ink-2);
+}
+.launch-wrote {
+  display: block;
+}
+@media (max-width: 719px) {
+  /* No peek on a phone: only the active card is laid out, at its own height. */
+  .launch-quote-slide {
+    transform: none;
+  }
+  .launch-quote-slide:not(.is-active) {
+    display: none;
+  }
+  .launch-quote-script {
+    font-size: 21px;
+  }
+  .launch-quote-script.ps {
+    font-size: 20px;
+  }
+  .launch-quote-roman {
+    font-size: var(--t-lg);
+  }
+}
+
+/* "Other things you can say": phrase | what it does, on hairline rows. */
+.launch-says {
+  border-block-start: 1px solid var(--frame);
+}
+.launch-say {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--s1) var(--s5);
+  padding-block: var(--s3);
+  border-block-end: 1px solid var(--rule);
+}
+.launch-say > dt {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+.launch-say > dt.is-plain {
+  font-family: var(--f-head);
+  font-style: normal;
+}
+.launch-say > dd {
+  color: var(--ink-2);
+}
+@media (max-width: 719px) {
+  .launch-say {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- 4. Your dashboard (a sample, on a heather wash) ---------- */
+.launch-dash {
+  padding: var(--s6);
+  border: 1px solid var(--frame);
+  background: var(--paper);
+  font-family: var(--f-ui);
+}
+.launch-dash-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2) var(--s4);
+}
+.launch-dash-title {
+  margin-block-start: var(--s5);
+  font-family: var(--f-head);
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.launch-dash-title .money {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+.launch-dash-lead {
+  margin-block-start: var(--s2);
+  font-family: var(--f-head);
+  font-size: var(--t-lg);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .launch-dash-title {
+  font-size: clamp(24px, 2.8vw, 32px);
+  line-height: 1.9;
+}
+:where(html[lang='ur']) .launch-dash-lead {
+  font-size: 17px;
+  line-height: 2;
+}
+.launch-dash-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s6);
+  margin-block-start: var(--s6);
+}
+.launch-dash-block {
+  min-width: 0;
+}
+.launch-dash-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s1) var(--s3);
+  margin-block-end: var(--s3);
+}
+.launch-dash-h {
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+:where(html[lang='ur']) .launch-dash-h {
+  font-size: 16px;
+  line-height: 1.9;
+}
+.launch-dash-table :is(th, td) {
+  padding: 10px 12px;
+}
+.launch-dash-table thead th {
+  white-space: normal;
+}
+.launch-dash-block > .legend {
+  margin-block-end: var(--s2);
+}
+@media (max-width: 899px) {
+  .launch-dash-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 719px) {
+  .launch-dash-fig.figure:not(.wash-none) > .figure-body {
+    padding: var(--s3);
+  }
+  .launch-dash {
+    padding: var(--s4);
+  }
+}
+
+/* ---------- 6. Questions: a hairline accordion ---------- */
+.launch-faq {
+  border-block-start: 1px solid var(--frame);
+}
+.launch-qa {
+  border-block-end: 1px solid var(--rule);
+}
+.launch-qa:last-child {
+  border-block-end-color: var(--frame);
+}
+.launch-qa > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  min-height: 60px;
+  padding-block: var(--s3);
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--f-head);
+  font-size: 19px;
+  line-height: 1.35;
+}
+.launch-qa > summary::-webkit-details-marker {
+  display: none;
+}
+.launch-qa > summary:hover .launch-q {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--ink-4);
+}
+.launch-qa-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--ink-2);
+  transition: transform var(--dur) var(--ease);
+}
+.launch-qa[open] .launch-qa-icon {
+  transform: rotate(45deg);
+}
+.launch-a {
+  padding-block-end: var(--s5);
+  padding-inline-end: var(--s7);
+  color: var(--ink-2);
+}
+:where(html[lang='ur']) .launch-qa > summary {
+  font-size: 18px;
+  line-height: 1.9;
+}
+@media (max-width: 719px) {
+  .launch-a {
+    padding-inline-end: var(--s5);
+  }
+}
+
+/* ---------- 7. Get started ---------- */
+.launch-start > h2 {
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+:where(html[lang='ur']) .launch-start > h2 {
+  font-size: 21px;
+  line-height: 1.9;
+}
+
+/* ---------- Section rail: kept off the painted hero ---------- */
+.launch-rail .section-rail {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--dur) var(--ease),
+    visibility 0s linear var(--dur);
+}
+.launch-rail.is-on .section-rail {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ---------- 4. Lists and suppliers: the sample shop's lists on a sage wash ---------- */
+.launch-lists-fig .grid-table-wrap {
+  background: var(--paper);
+}
+.launch-lists {
+  width: 100%;
+}
+.launch-lists tbody th {
+  font-weight: 600;
+}
+.launch-lists tr.is-suppliers > * {
+  border-block-start: 2px solid var(--frame);
+}
+.launch-section > .launch-lists-fig + h3 {
+  margin-block-start: var(--s7);
+}
+@media (max-width: 719px) {
+  .launch-lists tr.is-suppliers > * {
+    border-block-start-width: 1px;
+  }
+}

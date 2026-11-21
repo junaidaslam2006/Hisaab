@@ -1,0 +1,566 @@
+/* Home (/app): "today's edition" of the shop's khata, laid out like a launch post.
+   Text keeps the reading measure (640); tables, charts and cards take --wide (840). Everything is scoped under .home-page. */
+
+.home-page {
+  container: home / inline-size;
+}
+.home-page .home-wide {
+  width: 100%;
+  max-width: var(--wide);
+}
+.home-page .section {
+  margin-block-start: calc(var(--s8) + var(--s4));
+}
+.home-page .page-header + .section {
+  margin-block-start: 0;
+}
+.home-page .home-quiet {
+  color: var(--ink-2);
+}
+@media (max-width: 719px) {
+  .home-page .section {
+    margin-block-start: var(--s8);
+  }
+}
+@media (pointer: coarse) {
+  .home-page .section-head .link-arrow {
+    min-height: 44px;
+  }
+}
+
+/* ================= header: eyebrow · two-line serif headline · lead · pills · contents ================= */
+.home-page .home-header .eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--s2);
+}
+.home-eyebrow-shop {
+  color: var(--ink);
+  font-weight: 600;
+}
+.home-eyebrow-sep {
+  color: var(--ink-4);
+}
+
+.home-page .home-header h1 {
+  font-size: clamp(38px, 5.6vw, 62px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+/* The second line steps in, like the staggered title of a launch post. */
+.home-title-line {
+  display: block;
+}
+.home-title-line + .home-title-line {
+  padding-inline-start: 1.15em;
+}
+.home-amt {
+  font-family: var(--font-serif);
+  font-variant-numeric: lining-nums proportional-nums;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+/* Latin names inside the Urdu headline or lead stay in the serif voice, not the UI sans. */
+.home-page .home-header :is(h1, .lead) .latin {
+  font-family: var(--font-serif);
+}
+:where(html[lang='ur']) .home-page .home-header h1 {
+  font-size: clamp(30px, 4.4vw, 48px);
+  line-height: 1.65;
+}
+.home-skel-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  padding-block: 0.06em;
+}
+
+.home-page .home-header .actions {
+  gap: var(--s2);
+}
+
+/* Contents: a section name stays whole on its line; a long two-amount meta wraps at the end instead. */
+.home-page .home-header .toc-label {
+  flex: none;
+  max-width: 60%;
+}
+.home-page .home-header .toc-meta {
+  flex: 0 1 auto;
+  text-align: end;
+}
+
+@container home (max-width: 560px) {
+  .home-title-line + .home-title-line {
+    padding-inline-start: 0.6em;
+  }
+  /* Phones: the ink pill gets its own row, the call and the mic share the next. A recording mic takes a full row. */
+  .home-page .home-header .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+  .home-page .home-header .actions > .btn.primary,
+  .home-page .home-header .actions > .mic:has(.mic-rec) {
+    grid-column: 1 / -1;
+  }
+  .home-page .home-header .actions > .mic {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+  }
+  .home-page .home-header .actions > .btn,
+  .home-page .home-header .actions > .mic > .btn {
+    width: 100%;
+    padding-inline: var(--s3);
+  }
+}
+
+/* ================= [1] follow up: ink grid table, sage "Owes" column ================= */
+.home-follow tbody :is(th, td) {
+  vertical-align: middle;
+}
+.home-follow-name {
+  font-weight: 600;
+  text-decoration: none;
+}
+.home-follow-name:hover {
+  text-decoration: underline;
+}
+.home-follow td.hl .money {
+  font-size: var(--t-md);
+}
+.home-days {
+  color: var(--warn);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.home-days.is-long {
+  font-weight: 700;
+}
+.home-follow thead th:last-child,
+.home-follow .home-act {
+  width: 1%;
+  white-space: nowrap;
+  text-align: end;
+}
+@media (pointer: coarse) {
+  .home-follow-name {
+    display: inline-block;
+    padding-block: 10px;
+    margin-block: -10px;
+  }
+}
+@media (max-width: 719px) {
+  .home-page .home-follow.stack-sm td.home-act {
+    display: block;
+    width: auto;
+    padding: var(--s1) 14px 14px;
+    border-block-start: 0;
+  }
+  .home-page .home-follow.stack-sm td.home-act .btn {
+    width: 100%;
+  }
+}
+
+/* ================= [2] today: labelled cells over the day's entries, one frame ================= */
+.home-page .home-today-cells {
+  border-block-end: 1px solid var(--frame);
+}
+.home-today-cells .cell {
+  padding-block: var(--s4) var(--s5);
+}
+.home-today-cells .cell-value .money,
+.home-today .home-cell-big {
+  display: block;
+  margin-block-start: var(--s2);
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4vw, 42px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: lining-nums proportional-nums;
+}
+.home-today .home-cell-big {
+  color: var(--ink);
+}
+.home-cell-sub {
+  display: block;
+  margin-block-start: var(--s2);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+:where(html[lang='ur']) .home-cell-sub {
+  font-size: 14px;
+  line-height: 1.9;
+}
+/* Narrow: each cell becomes one ledger line, label and count at the start, the figure at the end. */
+@container home (max-width: 539px) {
+  .home-today-cells .cell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label value'
+      'sub value';
+    align-items: center;
+    column-gap: var(--s4);
+    padding-block: var(--s3);
+  }
+  .home-today-cells .cell > .label {
+    grid-area: label;
+    margin: 0;
+  }
+  .home-today-cells .cell-value {
+    display: contents;
+  }
+  .home-today-cells .cell-value .money,
+  .home-today .home-cell-big {
+    grid-area: value;
+    margin: 0;
+    font-size: 30px;
+  }
+  .home-today-cells .home-cell-sub {
+    grid-area: sub;
+    margin-block-start: 2px;
+  }
+}
+
+.home-frame-note {
+  padding: var(--s4) var(--s5);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.home-page .home-frame-more {
+  border-block-start: 1px solid var(--rule);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+}
+:where(html[lang='ur']) .home-frame-note {
+  line-height: 2.1;
+}
+@media (max-width: 719px) {
+  .home-frame-note {
+    padding-inline: var(--s4);
+  }
+}
+
+/* ================= entry rows (today + recent): time · customer · source chip · amount ================= */
+.home-page .home-entries td.home-e-time {
+  width: 1%;
+  white-space: nowrap;
+  color: var(--ink-2);
+  text-align: start;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.home-page .home-entries tbody th {
+  font-weight: 400;
+  white-space: normal;
+}
+.home-e-who a {
+  font-weight: 600;
+  text-decoration: none;
+}
+.home-e-who a:hover {
+  text-decoration: underline;
+}
+.home-entries .home-e-src,
+.home-entries .home-e-amt {
+  width: 1%;
+  white-space: nowrap;
+}
+.home-entries tr.is-void .money {
+  text-decoration: line-through;
+}
+
+/* Narrow: each entry is a two-line row; the whole row opens the customer. */
+@container home (max-width: 600px) {
+  .home-entries,
+  .home-entries tbody {
+    display: block;
+  }
+  .home-entries thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .home-entries tbody tr {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'who who amt'
+      'time src src';
+    align-items: center;
+    gap: var(--s1) var(--s3);
+    padding: var(--s3) var(--s4);
+    border-block-end: 1px solid var(--rule);
+  }
+  .home-entries tbody tr:last-child {
+    border-block-end: 0;
+  }
+  .home-page .home-entries tbody tr > :is(th, td) {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+  .home-entries .home-e-who {
+    grid-area: who;
+    min-width: 0;
+  }
+  .home-entries .home-e-amt {
+    grid-area: amt;
+  }
+  .home-page .home-entries td.home-e-time {
+    grid-area: time;
+    width: auto;
+    font-size: var(--t-xs);
+    color: var(--ink-3);
+  }
+  .home-entries .home-e-src {
+    grid-area: src;
+    justify-self: start;
+  }
+  .home-e-who a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+}
+
+/* ================= [3] last 14 days: tabs over a framed dot-and-line chart ================= */
+.home-trend-panel:focus-visible {
+  outline-offset: 4px;
+}
+.home-chart {
+  direction: ltr;
+}
+.home-chart .chart {
+  max-width: none;
+}
+.home-chart .home-chart-hit {
+  fill: transparent;
+}
+.home-chart .home-chart-guide {
+  stroke: var(--ink-4);
+  stroke-width: 1;
+  opacity: 0;
+  shape-rendering: crispEdges;
+  transition: opacity var(--dur) var(--ease);
+}
+.home-chart .home-chart-day:hover .home-chart-guide {
+  opacity: 1;
+}
+.home-chart text.home-chart-today {
+  fill: var(--ink);
+  font-weight: 600;
+}
+:where(html[lang='ur']) .home-chart text.home-chart-today.is-word {
+  font-family: var(--font-urdu);
+  font-size: 13px;
+}
+
+/* ================= [4] largest balances: a dotted-leader list, rank · name ……… amount ================= */
+.home-page .home-largest {
+  max-width: var(--reading);
+  font-size: var(--t-body);
+}
+.home-largest .toc-meta .money {
+  font-size: var(--t-sm);
+}
+:where(html[lang='ur']) .home-page .home-largest {
+  font-size: 17px;
+}
+
+/* ================= end matter ================= */
+.home-page .home-notes {
+  max-width: var(--reading);
+  margin-block-start: var(--s9);
+}
+@media (max-width: 719px) {
+  .home-page .home-notes {
+    margin-block-start: var(--s8);
+  }
+}
+
+/* ================= new shop: the first note ================= */
+.home-say .quote-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+/* Both lines sit at the reading start of the page (left in English, right in Urdu), whatever their own direction. */
+.home-say .home-say-ur {
+  font-size: clamp(26px, 3.4vw, 34px);
+  line-height: 1.75;
+  color: var(--ink);
+}
+.home-say .home-say-roman {
+  font-family: var(--font-serif);
+  font-size: var(--t-lg);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.home-say :is(.home-say-ur, .home-say-roman) {
+  text-align: left;
+}
+[dir='rtl'] .home-say :is(.home-say-ur, .home-say-roman) {
+  text-align: right;
+}
+.home-say .cells {
+  --cell-min: 200px;
+}
+
+.home-wait {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-block-start: var(--s6);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+.home-wait.is-heard {
+  color: var(--paid);
+}
+.home-wait-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--paid);
+  animation: home-pulse 1.6s var(--ease) infinite;
+}
+@keyframes home-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+:where(html[lang='ur']) .home-wait {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.home-alt {
+  margin-block-start: var(--s7);
+  padding-block-start: var(--s5);
+  border-block-start: 1px solid var(--rule);
+}
+.home-alt-lead {
+  margin-block-end: var(--s4);
+  font-family: var(--f-head);
+  font-size: var(--t-body);
+  line-height: 1.5;
+}
+:where(html[lang='ur']) .home-alt-lead {
+  line-height: 2.1;
+}
+@container home (max-width: 560px) {
+  .home-alt .cluster {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-alt .cluster > .btn,
+  .home-alt .cluster > .mic,
+  .home-alt .cluster > .mic > .btn {
+    width: 100%;
+  }
+}
+
+/* ================= loading ================= */
+.home-skel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s8);
+}
+.home-skel-toc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  max-width: var(--reading);
+}
+.home-skel-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.home-skel-frame {
+  margin-block-start: var(--s2);
+  border: 1px solid var(--frame);
+}
+.home-skel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: var(--s4) var(--s5);
+}
+.home-skel-row + .home-skel-row {
+  border-block-start: 1px solid var(--rule);
+}
+
+/* ================= sample data: a quiet note above the edition ================= */
+.home-page .home-sample {
+  max-width: var(--wide);
+  margin-block-end: var(--s6);
+}
+.home-sample-link {
+  font-weight: 600;
+}
+@media (max-width: 719px) {
+  .home-page .home-sample {
+    margin-block-end: var(--s5);
+  }
+}
+
+/* ================= your lists: ink grid table, sage Total column ================= */
+.home-lists tbody :is(th, td) {
+  vertical-align: middle;
+}
+.home-list-name {
+  font-weight: 600;
+  text-decoration: none;
+}
+.home-list-name:hover {
+  text-decoration: underline;
+}
+.home-page .home-lists .sub.home-list-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--s2);
+}
+.home-list-owing {
+  color: var(--owed);
+  font-weight: 500;
+}
+.home-lists td.hl .money {
+  font-size: var(--t-md);
+}
+.home-lists thead th:last-child,
+.home-lists .home-act {
+  width: 1%;
+  white-space: nowrap;
+  text-align: end;
+}
+/* A supplier total keeps its own colour on the sage column (4.9:1). */
+.home-lists td.hl .money.payable {
+  color: var(--lst-payable);
+}
+@media (max-width: 719px) {
+  .home-page .home-lists.stack-sm td.home-act {
+    display: block;
+    width: auto;
+    padding: var(--s1) 14px 14px;
+    border-block-start: 0;
+  }
+  .home-page .home-lists.stack-sm td.home-act .btn {
+    width: 100%;
+  }
+}
