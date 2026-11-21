@@ -19,7 +19,7 @@ export const tenantsWithWhatsApp = () => all("SELECT * FROM tenants WHERE wa_dir
 
 export function createTenant(phone) {
   const id = newId('t')
-  run('INSERT INTO tenants (id, phone, created_at) VALUES (?, ?, ?)', id, phone, Date.now())
+  run('INSERT INTO tenants (id, phone, created_at, voice_replies) VALUES (?, ?, ?, 0)', id, phone, Date.now())
   return getTenant(id)
 }
 

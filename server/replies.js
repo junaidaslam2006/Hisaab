@@ -1,5 +1,6 @@
-// Turns ledger results into (a) a short Urdu reply for the voice note (Urdu script) and
-// (b) a plain WhatsApp text card (Roman Urdu). Every number comes from the ledger, never from the AI.
+// Turns ledger results into (a) short Urdu sentences (Urdu script), sent as the WhatsApp text and, when a shop turns
+// voice replies on, spoken as a voice note, and (b) a structured Roman Urdu card for replies with tables or reminder
+// links. Every number comes from the ledger, never from the AI.
 // Keep this file free of node built-ins: the web app imports reminderMessage for the Settings preview.
 import { payDetailsOf, payLine } from './paydetails.js'
 
@@ -538,6 +539,36 @@ function describe(r, shop, pay) {
   return [s, t]
 }
 
+// Replies that carry a table or wa.me links keep the structured Roman Urdu card; every other reply is sent as
+// natural Urdu sentences.
+const STRUCTURED = new Set(['reminder', 'dues_list', 'full_ledger', 'lists_summary', 'help'])
+const OPENERS = ['جی، ', 'ٹھیک ہے، ', 'بالکل، ', 'جی بہتر، ']
+const urduRs = n => `${Math.abs(Math.round(n)).toLocaleString('en-PK')} روپے`
+/** Amounts in the Urdu sentences read "3,000 روپے" and stand out in bold on WhatsApp. */
+const boldAmounts = s => s.replace(/(\d+) روپے/g, (_, n) => `*${Number(n).toLocaleString('en-PK')} روپے*`)
+
+/** The reply as natural Urdu: what was done, the new balance, the shop's total, and how to fix a mistake. */
+function urduReply(results, writes, sentences, totals) {
+  const lines = sentences.map(boldAmounts)
+  const wrote = results.filter(r => (ENTRY_TYPES.has(r.type) || r.type === 'undo' || r.type === 'correct') && r.status === 'ok')
+  if (writes.length && lines.length) {
+    // A short, varied opener so the same kind of entry does not read like a form every time.
+    const pick = [...lines[0]].reduce((n, ch) => n + ch.charCodeAt(0), 0) % OPENERS.length
+    lines[0] = OPENERS[pick] + lines[0]
+  }
+  if (wrote.length) {
+    const forSuppliers = wrote.some(r => isSupplier(r.customer))
+    const forCustomers = wrote.some(r => !isSupplier(r.customer))
+    const footer = []
+    if (forCustomers || !forSuppliers) footer.push(`دکان کا کل ادھار: ${urduRs(totals.due)}`)
+    if (forSuppliers && totals.payable != null) footer.push(`سپلائرز کو دینے ہیں: ${urduRs(totals.payable)}`)
+    const last = writes[writes.length - 1]
+    footer.push(writes.length >= 2 ? `غلطی ہو تو نام کے ساتھ بولیں: «${ur(last.customer)} والی انٹری کینسل کرو»` : 'غلطی ہو تو بول دیں: «پچھلی انٹری کینسل کرو»')
+    lines.push('', ...footer.map(f => `_${f}_`))
+  }
+  return `${BOT_MARK}*حساب*\n${lines.join('\n')}`
+}
+
 export function buildReply(results, parsed, { tenant, totals }) {
   const spoken = []
   const lines = []
@@ -560,8 +591,11 @@ export function buildReply(results, parsed, { tenant, totals }) {
 
   if (!spoken.length) {
     spoken.push(parsed.replyUrdu || 'جی، بتائیں کس کے کھاتے میں کیا لکھوں؟')
-    // The text card is Roman Urdu; Urdu script only if the model gave no Roman line.
     lines.push(parsed.replyRoman || parsed.replyUrdu || 'Samajh nahi aaya. Aise bolein: "Umar ne 500 ka sauda liya". Madad ke liye "help" likhein.')
+  }
+
+  if (!compact && !results.some(r => STRUCTURED.has(r.type))) {
+    return { spoken: spoken.join(' '), text: urduReply(results, writes, spoken, totals) }
   }
 
   const wrote = results.filter(r => (ENTRY_TYPES.has(r.type) || r.type === 'undo' || r.type === 'correct') && r.status === 'ok')

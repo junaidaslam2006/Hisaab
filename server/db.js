@@ -148,6 +148,10 @@ const MIGRATIONS = [
   `
   ALTER TABLE tenants ADD COLUMN pay_details TEXT;
   `,
+  // Replies are text only by default; a shop can still turn voice replies on in Settings.
+  `
+  UPDATE tenants SET voice_replies = 0;
+  `,
 ]
 
 /** Exported so tests can build a database at an older schema version and check the upgrade. */

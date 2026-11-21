@@ -16,7 +16,7 @@ const DASHBOARD_RE = /^\s*(dashboard|dash|login|log in|link|website|web)\s*[.!?]
 const HELP_RE = /^\s*(help|madad|menu|commands|\?)\s*[.!?]*\s*$/i
 const LISTS_RE = /^\s*(lists?|meri lists?|my lists?|میری لسٹیں|لسٹیں|لسٹ)\s*[.!?]*\s*$/i
 // Sent once to the shop's own chat when Google is slow, so the owner knows the note arrived.
-export const INTERIM_TEXT = 'Mil gaya — likh raha hoon, thora waqt lag raha hai ⏳'
+export const INTERIM_TEXT = 'مل گیا، لکھ رہا ہوں، تھوڑا وقت لگ رہا ہے ⏳'
 const NO_FIELDS = { customer_id: null, customer_name: null, customer_name_urdu: null, amount: null, full_settlement: false, items: [], threshold: null, phone: null, list_name: null, list_name_urdu: null, list_kind: null }
 
 /** Lists the parser sees. Older ledgers had none; never let that block a message. */
@@ -235,7 +235,7 @@ async function processMessage(tenantId, { channel, audio, image, text, id = newI
       return finish(`${BOT_MARK}${HELP_TEXT}`, HELP_SPOKEN, { patch: { results: JSON.stringify([{ type: 'help', status: 'ok' }]) } })
     }
     if (!useQuota(tenantId)) {
-      return finish(`${BOT_MARK}*Hisaab*\nAaj ki hadd (${config.dailyMessageLimit} messages) poori ho gayi. Kal phir se bhejein.`, null, { status: 'error', patch: { error: 'limit' } })
+      return finish(`${BOT_MARK}*حساب*\nآج کے ${config.dailyMessageLimit} پیغامات کی حد پوری ہو گئی۔ کل دوبارہ بھیجیں۔`, null, { status: 'error', patch: { error: 'limit' } })
     }
 
     update(tenantId, id, { status: 'thinking' })
@@ -293,12 +293,12 @@ async function processMessage(tenantId, { channel, audio, image, text, id = newI
     const code = friendlyError(err)
     // Only a genuine failure of ours says "samajh nahi aaya"; Google being busy or the internet being down never does.
     const REPLIES = {
-      busy: ['ابھی سسٹم مصروف ہے، کچھ لکھا نہیں گیا۔ ایک منٹ بعد دوبارہ بھیجیں۔', 'Abhi system masroof hai, kuch likha nahi gaya. Ek minute baad dobara bhejein.'],
-      network: ['انٹرنیٹ کا مسئلہ ہے، کچھ لکھا نہیں گیا۔ ایک منٹ بعد دوبارہ بھیجیں۔', 'Internet ka masla hai, kuch likha nahi gaya. Ek minute baad dobara bhejein.'],
-      ai_config: ['حساب کی سیٹنگ میں مسئلہ ہے، کچھ لکھا نہیں گیا۔ ڈیش بورڈ پر سسٹم چیک کریں۔', 'Hisaab ki setting mein masla hai, kuch likha nahi gaya. Dashboard par system check karein.'],
-      not_understood: ['معاف کیجیے، ٹھیک سے سمجھ نہیں آیا۔ ایک بار دوبارہ بول دیں۔', 'Maaf kijiye, samajh nahi aaya. Dobara bol dein.'],
+      busy: 'ابھی سسٹم مصروف ہے، کچھ لکھا نہیں گیا۔ ایک منٹ بعد دوبارہ بھیجیں۔',
+      network: 'انٹرنیٹ کا مسئلہ ہے، کچھ لکھا نہیں گیا۔ ایک منٹ بعد دوبارہ بھیجیں۔',
+      ai_config: 'حساب کی سیٹنگ میں مسئلہ ہے، کچھ لکھا نہیں گیا۔ ڈیش بورڈ پر سسٹم چیک کریں۔',
+      not_understood: 'معاف کیجیے، ٹھیک سے سمجھ نہیں آیا۔ ایک بار دوبارہ بول دیں۔',
     }
-    const [spoken, textReply] = REPLIES[code] || REPLIES.not_understood
-    return finish(`${BOT_MARK}*Hisaab*\n${textReply}`, spoken, { status: 'error', patch: { error: code } })
+    const spoken = REPLIES[code] || REPLIES.not_understood
+    return finish(`${BOT_MARK}*حساب*\n${spoken}`, spoken, { status: 'error', patch: { error: code } })
   }
 }
